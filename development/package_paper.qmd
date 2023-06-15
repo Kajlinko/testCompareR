@@ -354,21 +354,7 @@ The output from the compareR function is a multilevel list object of
 class compareR. For those wishing to access individual results using
 standard R indexing. The list structure is visually described in Figure 1.
 
-```{r}
-nodes <- create_node_df(nodes = 1:7, type = "number",
-                      label = c("Results", "cont\nContingency Tables", 
-                                "prev\nPrevalence", "acc\nDiagnostic Accuracies",
-                                "pv\nPredictive Values", "lr\nLikelihood Ratios",
-                                "other\nOther Values"), n = 1)
-
-edges <- create_edge_df(from = c(1,1,1,1,1,1), to = c(2,3,4,5,6,7), rel = "leading to")
-
-graph <- create_graph(nodes_df = nodes, edges_df = edges)
-
-render_graph(graph)
-
-```
-*insert list structure here*
+![Figure 1. A diagrammatic representation of the multilevel list output from the `compareR()` function.](development/list_structure.png)
 
 `interpretR()`: The `interpretR()` function provides a means for
 clinicians to quickly understand the significance of their results,
