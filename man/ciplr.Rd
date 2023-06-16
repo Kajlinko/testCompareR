@@ -18,7 +18,8 @@ ciplr(s1, s0, r1, r0, z)
 \item{z}{Z-score of normal distribution at a defined alpha level.}
 }
 \value{
-A list object of class `'conf.1t'` or `'conf.2t'` containing lower and upper confidence bounds for positive likelihood ratio.
+A list object of class `'conf.1t'` or `'conf.2t'` containing lower
+and upper confidence bounds for positive likelihood ratio.
 }
 \description{
 Calculates confidence intervals for positive likelihood ratio.

@@ -19,51 +19,78 @@ compareR(
 )
 }
 \arguments{
-\item{df}{A data frame or matrix with 3 columns (test1, test2, gold). Flexible coding of positive and negative results permitted.}
+\item{df}{A data frame or matrix with 3 columns (test1, test2, gold).
+Flexible coding of positive and negative results permitted.}
 
 \item{alpha}{An alpha value. Defaults to 0.05.}
 
-\item{margins}{A Boolean value indicating whether the contingency tables should have margins containing summed totals of rows and columns.}
+\item{margins}{A Boolean value indicating whether the contingency tables
+should have margins containing summed totals of rows and columns.}
 
 \item{multi_corr}{Method for multiple comparisons. Uses `p.adjust.methods`.}
 
-\item{cc}{A Boolean value indicating whether McNemar's test should be applied with continuity correction.}
+\item{cc}{A Boolean value indicating whether McNemar's test should be applied
+with continuity correction.}
 
-\item{dp}{Number of decimal places of output in summary tables. Defaults to 1.}
+\item{dp}{Number of decimal places of output in summary tables.
+Defaults to 1.}
 
-\item{sesp}{A Boolean value indicating whether output should include sensitivity and specificity.}
+\item{sesp}{A Boolean value indicating whether output should include
+sensitivity and specificity.}
 
-\item{ppvnpv}{A Boolean value indicating whether output should include positive and negative predictive values.}
+\item{ppvnpv}{A Boolean value indicating whether output should include
+positive and negative predictive values.}
 
-\item{plrnlr}{A Boolean value indicating whether output should include positive and negative likelihood ratios.}
+\item{plrnlr}{A Boolean value indicating whether output should include
+positive and negative likelihood ratios.}
 
-\item{test.names}{A vector of length two giving the names of the two different binary diagnostic tests. This argument is not relevant when testing a single binary diagnostic test.}
+\item{test.names}{A vector of length two giving the names of the two
+different binary diagnostic tests. This argument is not relevant when testing
+a single binary diagnostic test.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
-A list objective summarising all calculated descriptive and inferential statistics.
+A list objective summarising all calculated descriptive and
+inferential statistics.
 }
 \description{
-Calculates descriptive statistics and performs statistical inference on two binary diagnostic tests in a single function call. Handles multiple comparisons using methods in `p.adjust()`.
+Calculates descriptive statistics and performs statistical
+inference on two binary diagnostic tests in a single function call. Handles
+multiple comparisons using methods in `p.adjust()`.
 }
 \details{
-Confidence intervals for prevalence, diagnostic accuracies and predictive values are calculated using the interval for binomial proportions described by Yu et al. (2014).
-Confidence intervals for likelihood ratios are calculated using the methods recommended by Martín-Andrés and Álvarez-Hernández (2014).
-Hypothesis testing for diagnostic accuracies uses different methods depending on disease prevalence and number of participants or samples as described by Roldán-Nofuentes and Sidaty-Regad (2019).
-Global hypothesis testing for predictive values uses a method described by Roldán-Nofuentes et al. (2012), with subsequent individual tests (where indicated) performed using methods described by Kosinksi (2012).
-The methods for hypothesis testing- for likelihood ratios are taken from Roldán-Nofuentes & Luna del Castillo (2007).
+Confidence intervals for prevalence, diagnostic accuracies and predictive
+values are calculated using the interval for binomial proportions described
+by Yu et al. (2014).
+Confidence intervals for likelihood ratios are calculated using the methods
+recommended by Martín-Andrés and Álvarez-Hernández (2014).
+Hypothesis testing for diagnostic accuracies uses different methods depending
+on disease prevalence and number of participants or samples as described by
+Roldán-Nofuentes and Sidaty-Regad (2019).
+Global hypothesis testing for predictive values uses a method described by
+Roldán-Nofuentes et al. (2012), with subsequent individual tests (where
+indicated) performed using methods described by Kosinksi (2012).
+The methods for hypothesis testing- for likelihood ratios are taken from
+Roldán-Nofuentes & Luna del Castillo (2007).
 
-An excellent summary of these methods is provided by Roldán-Nofuentes (2020) along with an open-source program (compbdt) licensed under GPL-2. This R package can be considered an extension of this work and is therefore distributed under the same license.
-Please consider citing Roldán-Nofuentes (2020) when you are citing this package.
+An excellent summary of these methods is provided by Roldán-Nofuentes (2020)
+along with an open-source program (compbdt) licensed under GPL-2.
+This R package can be considered an extension of this work and is therefore
+distributed under the same license.
+Please consider citing Roldán-Nofuentes (2020) when you are citing this
+package.
 }
 \examples{
 # load data
 df <- cfpr
 
 # run compareR function
-compareR(df, margins = TRUE, multi_corr = "bonf",
-         test.names = c("pulm.exac","pseudomonas"))
+compareR(df,
+  margins = TRUE, multi_corr = "bonf",
+  test.names = c("pulm.exac", "pseudomonas")
+)
 
 }
 \references{
@@ -76,7 +103,8 @@ Martín Andrés & Álvarez Hernández (2014) Stat Comput. 2014; 24,65–75
 Roldán-Nofuentes & Sidaty-Regad (2019) JSCS. 2019; 89:14,2621-2644
 \doi{10.1080/00949655.2019.1628234}
 
-Roldán-Nofuentes, Luna del Castillo & Montero-Alonso (2012) Comput Stat Data Anal. 2012; 6,1161–1173.
+Roldán-Nofuentes, Luna del Castillo & Montero-Alonso (2012) Comput Stat Data
+Anal. 2012; 6,1161–1173.
 \doi{10.1016/j.csda.2011.06.003}
 
 Kosinski (2012) Stat Med. 2012; 32,964-977

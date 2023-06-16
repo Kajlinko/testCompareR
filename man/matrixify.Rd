@@ -12,19 +12,28 @@ matrixify(
 )
 }
 \arguments{
-\item{vals}{A list object containing all values required for calculations with class `vals.1test` or `vals.2test`. These objects are output by the `values.1test()` and `values.2test()` function.}
+\item{vals}{A list object containing all values required for calculations
+with class `vals.1test` or `vals.2test`. These objects are output by the
+`values.1test()` and `values.2test()` function.}
 
-\item{rows}{A vector of length two giving the names of the related tests (eg. sensitivity and specificity).}
+\item{rows}{A vector of length two giving the names of the related tests
+(eg. sensitivity and specificity).}
 
-\item{test.names}{A vector of length two giving the names of the two different binary diagnostic tests. This argument is not relevant when testing a single binary diagnostic test.}
+\item{test.names}{A vector of length two giving the names of the two
+different binary diagnostic tests. This argument is not relevant when testing
+a single binary diagnostic test.}
 
 \item{dp}{Number of decimal places of output. Defaults to 1.}
 }
 \value{
-Either a matrix or list of matrices displaying point estimates, standard errors and upper and lower confidence bounds for related outputs (eg. sensitivity and specificity) of one or two binary diagnostic tests.
+Either a matrix or list of matrices displaying point estimates,
+standard errors and upper and lower confidence bounds for related outputs
+(eg. sensitivity and specificity) of one or two binary diagnostic tests.
 }
 \description{
-Produces a matrix containing point estimates, standard errors and upper and lower confidence bounds for related outputs (eg. sensitivity and specificity) of one or two binary diagnostic tests.
+Produces a matrix containing point estimates, standard errors
+and upper and lower confidence bounds for related outputs (eg. sensitivity
+and specificity) of one or two binary diagnostic tests.
 }
 \examples{
 # load data

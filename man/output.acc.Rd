@@ -7,15 +7,20 @@
 output.acc(vals, ...)
 }
 \arguments{
-\item{vals}{A list object containing all values required for calculations with class `vals.1test` or `vals.2test`. These objects are output by the `values.1test()` and `values.2test()` function.}
+\item{vals}{A list object containing all values required for calculations
+with class `vals.1test` or `vals.2test`. These objects are output by the
+`values.1test()` and `values.2test()` function.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
-A list object containing test statistics and p-values for global and individual hypothesis tests of diagnostic accuracies.
+A list object containing test statistics and p-values for global and
+individual hypothesis tests of diagnostic accuracies.
 }
 \description{
-Performs statistical inference tests on the diagnostic accuracies of two binary diagnostic tests.
+Performs statistical inference tests on the diagnostic
+accuracies of two binary diagnostic tests.
 }
 \examples{
 # load data

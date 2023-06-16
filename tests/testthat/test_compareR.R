@@ -1,9 +1,9 @@
 test_that("compareR function tests", {
+  # Test case 1:
+  # Acceptable data frame (default non-data arguments, not significant)
 
-  # Test case 1: Acceptable data frame (default non-data arguments, not significant)
-
-  test1 <- c(rep(1,305), rep(0,95), rep(1, 50), rep(0,150))
-  test2 <- c(rep(1,300), rep(0,100), rep(1, 51), rep(0,149))
+  test1 <- c(rep(1, 305), rep(0, 95), rep(1, 50), rep(0, 150))
+  test2 <- c(rep(1, 300), rep(0, 100), rep(1, 51), rep(0, 149))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -57,8 +57,8 @@ test_that("compareR function tests", {
 
   # Test case 2: Acceptable data frame (default non-data arguments, significant)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -112,8 +112,8 @@ test_that("compareR function tests", {
 
   # Test case 3: Low prevalence and n (with continuity correction)
 
-  test1 <- c(rep(1,6), rep(0,2), rep(1, 14), rep(0,76))
-  test2 <- c(rep(1,1), rep(0,7), rep(1, 2), rep(0,88))
+  test1 <- c(rep(1, 6), rep(0, 2), rep(1, 14), rep(0, 76))
+  test2 <- c(rep(1, 1), rep(0, 7), rep(1, 2), rep(0, 88))
   gold <- c(rep(1, 8), rep(0, 90))
 
   df <- data.frame(test1, test2, gold)
@@ -126,8 +126,8 @@ test_that("compareR function tests", {
 
   # Test case 4: Low prevalence and n (without continuity correction)
 
-  test1 <- c(rep(1,6), rep(0,2), rep(1, 14), rep(0,76))
-  test2 <- c(rep(1,1), rep(0,7), rep(1, 2), rep(0,88))
+  test1 <- c(rep(1, 6), rep(0, 2), rep(1, 14), rep(0, 76))
+  test2 <- c(rep(1, 1), rep(0, 7), rep(1, 2), rep(0, 88))
   gold <- c(rep(1, 8), rep(0, 90))
 
   df <- data.frame(test1, test2, gold)
@@ -139,8 +139,8 @@ test_that("compareR function tests", {
   expect_equal(output1$acc$glob.p.value, as.double(NA))
 
   # Test 5
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -172,21 +172,21 @@ test_that("compareR function tests", {
   df2 <- data.frame(
     col1 = as.factor(c("positive", "pos", "p", "yes", "y", "+", "1")),
     col2 = c("negative", "neg", "no", "n", "-", "0", "2"),
-    col3 = c(0,1,1,0,1,0,1)
+    col3 = c(0, 1, 1, 0, 1, 0, 1)
   )
   expect_no_error(compareR(df2))
 
   df3 <- data.frame(
     col1 = c("positive", "pos", "p", "yes", "y", "+", "1"),
     col2 = c("negative", "neg", "no", NA, "-", "0", "2"),
-    col3 = c(0,1,1,0,1,0,1)
+    col3 = c(0, 1, 1, 0, 1, 0, 1)
   )
   expect_error(compareR(df3), ".*NAs are not supported\\..*")
 
   df4 <- data.frame(
     col1 = c("positive", "pos", "p", "yes", "y", "+", "1"),
     col2 = c("negative", "neg", "no", "na", "-", "0", "2"),
-    col3 = c(0,1,1,0,1,0,1)
+    col3 = c(0, 1, 1, 0, 1, 0, 1)
   )
   expect_error(compareR(df4), ".*NAs are not supported\\..*")
 
@@ -203,10 +203,10 @@ test_that("compareR function tests", {
     col3 = c("positive", "pos", "p", "yes", "y", "+", "1"),
     col4 = c("negative", "neg", "no", "n", "-", "0", "2")
   )
-  expect_error(compareR(df6), ".*three columns\\..*")
+  expect_error(compareR(df6), ".*two or three*")
 
   mat <- matrix(
-    sample(c(0,1), 10, replace = TRUE),
+    sample(c(0, 1), 10, replace = TRUE),
     ncol = 2
   )
   expect_error(compareR(mat), ".*three columns\\..*")
@@ -217,15 +217,18 @@ test_that("compareR function tests", {
   )
   expect_error(compareR(mat), ".*Coding errors exist\\..*")
 
-  vec <- c(0,1,0,1,0)
-  expect_error(compareR(vec), "Data should be provided as a data frame or matrix.")
+  vec <- c(0, 1, 0, 1, 0)
+  expect_error(
+    compareR(vec),
+    "Data should be provided as a data frame or matrix."
+  )
 
   # Tests for validity of non-data arguments
 
   # Edge case 1: Tests have equal performance.
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -238,13 +241,15 @@ test_that("compareR function tests", {
 
   # Edge case 2: No test selected.
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
   output1 <- compareR(df)
 
-  expect_error(compareR(df, sesp = FALSE, ppvnpv = FALSE, plrnlr = FALSE), "No tests selected.")
-
+  expect_error(
+    compareR(df, sesp = FALSE, ppvnpv = FALSE, plrnlr = FALSE),
+    "No tests selected."
+  )
 })

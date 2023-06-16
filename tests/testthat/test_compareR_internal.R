@@ -3,7 +3,6 @@
 #-------------------------------------------------------------------------------
 
 test_that("check.df", {
-
   # Test case 1: Valid data frame
   df1 <- data.frame(
     col1 = c("positive", "pos", "p", "yes", "y", "+", "1"),
@@ -47,11 +46,11 @@ test_that("check.df", {
     col3 = c("positive", "pos", "p", "yes", "y", "+", "1"),
     col4 = c("negative", "neg", "no", "n", "-", "0", "2")
   )
-  expect_error(check.df(df6), ".*with two or three columns\\..*")
+  expect_error(check.df(df6), ".*with two or three*")
 
   # Test case 7: Valid matrix
   mat <- matrix(
-    sample(c(0,1), 10, replace = TRUE),
+    sample(c(0, 1), 10, replace = TRUE),
     ncol = 2
   )
   expect_silent(check.df(mat))
@@ -64,9 +63,11 @@ test_that("check.df", {
   expect_error(check.df(mat), ".*Coding errors exist\\..*")
 
   # Test case 9: Invalid object
-  vec <- c(0,1,0,1,0)
-  expect_error(check.df(vec), "Data should be provided as a data frame or matrix.")
-
+  vec <- c(0, 1, 0, 1, 0)
+  expect_error(
+    check.df(vec),
+    "Data should be provided as a data frame or matrix."
+  )
 })
 
 #-------------------------------------------------------------------------------
@@ -74,7 +75,6 @@ test_that("check.df", {
 #-------------------------------------------------------------------------------
 
 test_that("recoder", {
-
   # Test case 1: Valid data frame (characters)
   df1 <- data.frame(
     col1 = c("positive", "pos", "p", "yes", "y", "+", "1"),
@@ -86,8 +86,8 @@ test_that("recoder", {
 
   # Test case 2: Valid data frame (numeric)
   df2 <- data.frame(
-    col1 = c(0,1,1,0,1),
-    col2 = c(1,1,0,0,1)
+    col1 = c(0, 1, 1, 0, 1),
+    col2 = c(1, 1, 0, 0, 1)
   )
   expect_s3_class(recoder(df1), "data.frame")
   expect_true(all(sapply(recoder(df1), is.integer)))
@@ -132,10 +132,10 @@ test_that("recoder", {
     col3 = c("positive", "pos", "p", "yes", "y", "+", "1"),
     col4 = c("negative", "neg", "no", "n", "-", "0", "2")
   )
-  expect_error(check.df(df6), ".*with two or three columns\\..*")
+  expect_error(check.df(df6), ".*with two or three*")
 
   mat <- matrix(
-    sample(c(0,1), 10, replace = TRUE),
+    sample(c(0, 1), 10, replace = TRUE),
     ncol = 2
   )
   expect_silent(check.df(mat))
@@ -146,9 +146,11 @@ test_that("recoder", {
   )
   expect_error(check.df(mat), ".*Coding errors exist\\..*")
 
-  vec <- c(0,1,0,1,0)
-  expect_error(check.df(vec), "Data should be provided as a data frame or matrix.")
-
+  vec <- c(0, 1, 0, 1, 0)
+  expect_error(
+    check.df(vec),
+    "Data should be provided as a data frame or matrix."
+  )
 })
 
 #-------------------------------------------------------------------------------
@@ -156,9 +158,11 @@ test_that("recoder", {
 #-------------------------------------------------------------------------------
 
 test_that("values.1test function tests", {
-
   # Test case 1: Correct input data frame
-  df1 <- data.frame(col1 = as.integer(c(1, 0, 1, 0)), col2 = as.integer(c(1, 1, 0, 0)))
+  df1 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0)),
+    col2 = as.integer(c(1, 1, 0, 0))
+  )
   result1 <- values.1test(df1)
   expect_type(result1$s1, "integer")
   expect_gte(result1$s1, 0)
@@ -210,9 +214,15 @@ test_that("values.1test function tests", {
 
 
   # Test case 2: Incorrect number of columns in input data frame
-  df2 <- data.frame(col1 = as.integer(c(1, 0, 1, 0, 1)), col2 = as.integer(c(1, 1, 0, 0, 1)), col3 = as.integer(c(1,1,1,0,0)))
-  expect_error(values.1test(df2), "Please provide data as a data frame with two columns.")
-
+  df2 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0, 1)),
+    col2 = as.integer(c(1, 1, 0, 0, 1)),
+    col3 = as.integer(c(1, 1, 1, 0, 0))
+  )
+  expect_error(
+    values.1test(df2),
+    "Please provide data as a data frame with two columns."
+  )
 })
 
 #-------------------------------------------------------------------------------
@@ -220,10 +230,13 @@ test_that("values.1test function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("values.2test function tests", {
-
   # Test case 1: Correct input data frame
 
-  df1 <- data.frame(col1 = as.integer(c(1, 0, 1, 0)), col2 = as.integer(c(1, 1, 0, 0)), col3 = as.integer(c(0, 1, 1, 0)))
+  df1 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0)),
+    col2 = as.integer(c(1, 1, 0, 0)),
+    col3 = as.integer(c(0, 1, 1, 0))
+  )
   result1 <- values.2test(df1)
   expect_type(result1$s11, "integer")
   expect_gte(result1$s11, 0)
@@ -307,9 +320,14 @@ test_that("values.2test function tests", {
 
   # Test case 2: Incorrect number of columns in input data frame
 
-  df2 <- data.frame(col1 = as.integer(c(1, 0, 1, 0, 1)), col2 = as.integer(c(1, 1, 0, 0, 1)))
-  expect_error(values.2test(df2), "Please provide data as a data frame with three columns.")
-
+  df2 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0, 1)),
+    col2 = as.integer(c(1, 1, 0, 0, 1))
+  )
+  expect_error(
+    values.2test(df2),
+    "Please provide data as a data frame with three columns."
+  )
 })
 
 #-------------------------------------------------------------------------------
@@ -317,32 +335,48 @@ test_that("values.2test function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("disp.cont function tests", {
-
   # Test 1: Correct values.1test without margins
 
-  df1 <- data.frame(col1 = as.integer(c(1, 0, 1, 0)), col2 = as.integer(c(1, 1, 0, 0)))
+  df1 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0)),
+    col2 = as.integer(c(1, 1, 0, 0))
+  )
   results1 <- values.1test(df1)
   expect_type(disp.cont(results1), "integer")
   expect_true(all(disp.cont(results1)) >= 0)
-  expect_equal(disp.cont(results1), matrix(c(1,1,1,1), ncol = 2), ignore_attr = TRUE)
+  expect_equal(disp.cont(results1),
+    matrix(c(1, 1, 1, 1), ncol = 2),
+    ignore_attr = TRUE
+  )
 
   # Test 2: Correct values.1test without margins
 
   expect_type(disp.cont(results1, margins = TRUE), "double")
   expect_true(all(disp.cont(results1)) >= 0)
-  expect_equal(disp.cont(results1, margins = TRUE), addmargins(matrix(c(1,1,1,1), ncol = 2)), ignore_attr = TRUE)
+  expect_equal(disp.cont(results1, margins = TRUE),
+    addmargins(matrix(c(1, 1, 1, 1), ncol = 2)),
+    ignore_attr = TRUE
+  )
 
   # Test 3: Correct values.2test without margins
 
-  df2 <- data.frame(col1 = as.integer(c(1,0,1,0,1,0,1,0)), col2 = as.integer(c(1,1,0,0,1,1,0,0)), col3 = as.integer(c(1,1,1,1,0,0,0,0)))
+  df2 <- data.frame(
+    col1 = as.integer(c(1, 0, 1, 0, 1, 0, 1, 0)),
+    col2 = as.integer(c(1, 1, 0, 0, 1, 1, 0, 0)),
+    col3 = as.integer(c(1, 1, 1, 1, 0, 0, 0, 0))
+  )
   results2 <- values.2test(df2)
   expect_type(disp.cont(results2), "list")
   expect_type(disp.cont(results2)[[1]], "integer")
   expect_type(disp.cont(results2)[[2]], "integer")
   expect_true(all(disp.cont(results2)[[1]] >= 0))
   expect_true(all(disp.cont(results2)[[2]] >= 0))
-  expect_equal(disp.cont(results2)[[1]], matrix(c(1,1,1,1), ncol = 2), ignore_attr = TRUE)
-  expect_equal(disp.cont(results2)[[2]], matrix(c(1,1,1,1), ncol = 2), ignore_attr = TRUE)
+  expect_equal(disp.cont(results2)[[1]], matrix(c(1, 1, 1, 1), ncol = 2),
+    ignore_attr = TRUE
+  )
+  expect_equal(disp.cont(results2)[[2]], matrix(c(1, 1, 1, 1), ncol = 2),
+    ignore_attr = TRUE
+  )
 
   # Test 4: Correct values.2test without margins
 
@@ -351,31 +385,42 @@ test_that("disp.cont function tests", {
   expect_type(disp.cont(results2, margins = TRUE)[[2]], "double")
   expect_true(all(disp.cont(results2, margins = TRUE)[[1]] >= 0))
   expect_true(all(disp.cont(results2, margins = TRUE)[[2]] >= 0))
-  expect_equal(disp.cont(results2, margins = TRUE)[[1]], addmargins(matrix(c(1,1,1,1), ncol = 2)), ignore_attr = TRUE)
-  expect_equal(disp.cont(results2, margins = TRUE)[[2]], addmargins(matrix(c(1,1,1,1), ncol = 2)), ignore_attr = TRUE)
+  expect_equal(disp.cont(results2, margins = TRUE)[[1]],
+    addmargins(matrix(c(1, 1, 1, 1), ncol = 2)),
+    ignore_attr = TRUE
+  )
+  expect_equal(disp.cont(results2, margins = TRUE)[[2]],
+    addmargins(matrix(c(1, 1, 1, 1), ncol = 2)),
+    ignore_attr = TRUE
+  )
 
   # Test 5: Incorrect list object without class
 
   l1 <- list(s1 = 49, s0 = 17, r1 = 2, r0 = 113)
-  expect_error(disp.cont(l1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
+  expect_error(disp.cont(
+    l1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 
   # Test 6: Non-list object without class
 
   v1 <- c(TP = 49, FN = 17, FP = 2, TN = 113)
-  expect_error(disp.cont(v1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
+  expect_error(disp.cont(
+    v1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 
   # Edge case 1: Incorrect list object with correct class
 
   l2 <- list(TP = 49, FN = 17, FP = 2, TN = 113)
   class(l2) <- "vals.1test"
-  expect_error(disp.cont(l2)) # I would like a custom error message here - but not yet figured it out.
+  expect_error(disp.cont(l2))
 
   # Edge case 2: Non-list object with correct class
 
   v2 <- c(TP = 49, FN = 17, FP = 2, TN = 113)
   class(v2) <- "vals.1test"
-  expect_error(disp.cont(v2)) # I would like a custom error message here - but not yet figured it out.
-
+  expect_error(disp.cont(v2))
 })
 
 #-------------------------------------------------------------------------------
@@ -383,11 +428,10 @@ test_that("disp.cont function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("yu.int function tests", {
-
   # Test 1: Correct values
 
   n <- as.integer(100)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 0.5
   output <- yu.int(n, z, est)
 
@@ -399,7 +443,7 @@ test_that("yu.int function tests", {
   # Test 2: n is negative
 
   n <- as.integer(-100)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 0.5
 
   expect_error(yu.int(n, z, est), "n must be a non-negative integer.")
@@ -407,7 +451,7 @@ test_that("yu.int function tests", {
   # Test 3: n is not an integer
 
   n <- 100
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 0.5
 
   expect_error(yu.int(n, z, est), "n must be a non-negative integer.")
@@ -415,7 +459,7 @@ test_that("yu.int function tests", {
   # Test 4: z is negative
 
   n <- as.integer(100)
-  z <- -qnorm(1 - 0.05/2)
+  z <- -qnorm(1 - 0.05 / 2)
   est <- 0.5
 
   expect_error(yu.int(n, z, est), "z must not be negative.")
@@ -423,15 +467,18 @@ test_that("yu.int function tests", {
   # Test 5: Point estimate is not between 0 and 1
 
   n <- as.integer(100)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 50
 
-  expect_error(yu.int(n, z, est), "Point estimate must be between 0 and 1, inclusive.")
+  expect_error(
+    yu.int(n, z, est),
+    "Point estimate must be between 0 and 1, inclusive."
+  )
 
   # Edge case 1: low n, point estimate close to 0 (will produce LCI < 0)
 
   n <- as.integer(50)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 0.00001
   output <- yu.int(n, z, est)
 
@@ -441,7 +488,7 @@ test_that("yu.int function tests", {
   # Edge case 2: low n, point estimate close to 1 (will produce UCI < 0)
 
   n <- as.integer(50)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- 0.99999
   output <- yu.int(n, z, est)
 
@@ -451,13 +498,12 @@ test_that("yu.int function tests", {
   # Edge case 3: Point estimate is NA/NaN
 
   n <- as.integer(50)
-  z <- qnorm(1 - 0.05/2)
+  z <- qnorm(1 - 0.05 / 2)
   est <- NA
   output <- yu.int(n, z, est)
 
   expect_equal(output$lower, 0)
   expect_equal(output$upper, 1)
-
 })
 
 #-------------------------------------------------------------------------------
@@ -465,11 +511,10 @@ test_that("yu.int function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("conf.prev function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -495,17 +540,25 @@ test_that("conf.prev function tests", {
   expect_equal(output2$ci.upper, 0.6975496, tolerance = 1e-06)
   expect_lt(output2$ci.lower, output2$est)
   expect_gt(output2$ci.upper, output2$est)
-  expect_lt(output2$ci.upper-output2$ci.lower, output1$ci.upper-output1$ci.lower)
+  expect_lt(
+    output2$ci.upper - output2$ci.lower,
+    output1$ci.upper - output1$ci.lower
+  )
 
   # Test 3: Unacceptable alpha value
 
-  expect_error(conf.prev(dat, alpha = 1.1), "Alpha must be a value between 0 and 1, inclusive.")
+  expect_error(
+    conf.prev(dat, alpha = 1.1),
+    "Alpha must be a value between 0 and 1, inclusive."
+  )
 
   # Test 4: Incorrect list object without class
 
   l1 <- list(s1 = 49, s0 = 17, r1 = 2, r0 = 113)
-  expect_error(conf.prev(l1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
-
+  expect_error(conf.prev(
+    l1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 })
 
 #-------------------------------------------------------------------------------
@@ -513,11 +566,10 @@ test_that("conf.prev function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("conf.acc function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -588,16 +640,22 @@ test_that("conf.acc function tests", {
 
   # Test 3: Unacceptable alpha value
 
-  expect_error(conf.acc(dat, alpha = 1.1), "Alpha must be a value between 0 and 1, inclusive.")
+  expect_error(
+    conf.acc(dat, alpha = 1.1),
+    "Alpha must be a value between 0 and 1, inclusive."
+  )
 
   # Test 4: Incorrect list object without class
 
   l1 <- list(s1 = 49, s0 = 17, r1 = 2, r0 = 113)
-  expect_error(conf.acc(l1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
+  expect_error(conf.acc(
+    l1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 
   # Test 5: Correct data for one test
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, gold)
@@ -617,7 +675,6 @@ test_that("conf.acc function tests", {
   expect_equal(output1$sp$SE, 0.03157333, tolerance = 1e-06)
   expect_equal(output1$sp$ci.lower, 0.6880295, tolerance = 1e-06)
   expect_equal(output1$sp$ci.upper, 0.7593152, tolerance = 1e-06)
-
 })
 
 #-------------------------------------------------------------------------------
@@ -625,11 +682,10 @@ test_that("conf.acc function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("conf.pv function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -700,16 +756,22 @@ test_that("conf.pv function tests", {
 
   # Test 3: Unacceptable alpha value
 
-  expect_error(conf.pv(dat, alpha = 1.1), "Alpha must be a value between 0 and 1, inclusive.")
+  expect_error(
+    conf.pv(dat, alpha = 1.1),
+    "Alpha must be a value between 0 and 1, inclusive."
+  )
 
   # Test 4: Incorrect list object without class
 
   l1 <- list(s1 = 49, s0 = 17, r1 = 2, r0 = 113)
-  expect_error(conf.pv(l1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
+  expect_error(conf.pv(
+    l1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 
   # Test 5: Correct data for one test
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, gold)
@@ -729,7 +791,6 @@ test_that("conf.pv function tests", {
   expect_equal(output1$NPV$SE, 0.001281915, tolerance = 1e-06)
   expect_equal(output1$NPV$ci.lower, 0.5520888, tolerance = 1e-06)
   expect_equal(output1$NPV$ci.upper, 0.6305009, tolerance = 1e-06)
-
 })
 
 #-------------------------------------------------------------------------------
@@ -737,11 +798,10 @@ test_that("conf.pv function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("conf.lr function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -812,16 +872,22 @@ test_that("conf.lr function tests", {
 
   # Test 3: Unacceptable alpha value
 
-  expect_error(conf.lr(dat, alpha = 1.1), "Alpha must be a value between 0 and 1, inclusive.")
+  expect_error(
+    conf.lr(dat, alpha = 1.1),
+    "Alpha must be a value between 0 and 1, inclusive."
+  )
 
   # Test 4: Incorrect list object without class
 
   l1 <- list(s1 = 49, s0 = 17, r1 = 2, r0 = 113)
-  expect_error(conf.lr(l1, "Argument must be of \"vals.1test\" or \"vals.2test\" class."))
+  expect_error(conf.lr(
+    l1,
+    "Argument must be of \"vals.1test\" or \"vals.2test\" class."
+  ))
 
   # Test 5: Correct data for one test
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, gold)
@@ -841,7 +907,6 @@ test_that("conf.lr function tests", {
   expect_equal(output1$NLR$SE, 0.03342614, tolerance = 1e-06)
   expect_equal(output1$NLR$ci.lower, 0.2852326, tolerance = 1e-06)
   expect_equal(output1$NLR$ci.upper, 0.417246, tolerance = 1e-06)
-
 })
 
 #-------------------------------------------------------------------------------
@@ -849,11 +914,10 @@ test_that("conf.lr function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("output.acc function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -885,7 +949,6 @@ test_that("output.acc function tests", {
 
   v1 <- c(TP = 49, FN = 17, FP = 2, TN = 113)
   expect_error(output.acc(v1, "Argument must be of \"vals.2test\" class."))
-
 })
 
 #-------------------------------------------------------------------------------
@@ -893,11 +956,10 @@ test_that("output.acc function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("output.pv function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -920,7 +982,6 @@ test_that("output.pv function tests", {
 
   v1 <- c(TP = 49, FN = 17, FP = 2, TN = 113)
   expect_error(output.pv(v1, "Argument must be of \"vals.2test\" class."))
-
 })
 
 #-------------------------------------------------------------------------------
@@ -928,11 +989,10 @@ test_that("output.pv function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("output.acc function tests", {
-
   # Test 1: Correct values (default non-data arguments)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -955,7 +1015,6 @@ test_that("output.acc function tests", {
 
   v1 <- list(TP = 49, FN = 17, FP = 2, TN = 113)
   expect_error(output.lr(v1, "Argument must be of \"vals.2test\" class."))
-
 })
 
 #-------------------------------------------------------------------------------
@@ -963,11 +1022,10 @@ test_that("output.acc function tests", {
 #-------------------------------------------------------------------------------
 
 test_that("matrixify function tests", {
-
   # Test 1: conf.2t (not LR)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-  test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
+  test2 <- c(rep(1, 280), rep(0, 120), rep(1, 45), rep(0, 155))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, test2, gold)
@@ -975,24 +1033,24 @@ test_that("matrixify function tests", {
   output1 <- matrixify(conf.acc(dat))
 
   expect_type(output1, "list")
-  expect_equal(output1$`Test 1`[1,1], 75.0, tolerance = 1e-06)
-  expect_equal(output1$`Test 1`[2,1], 72.5, tolerance = 1e-06)
-  expect_equal(output1$`Test 2`[1,1], 70.0, tolerance = 1e-06)
-  expect_equal(output1$`Test 2`[2,1], 77.5, tolerance = 1e-06)
+  expect_equal(output1$`Test 1`[1, 1], 75.0, tolerance = 1e-06)
+  expect_equal(output1$`Test 1`[2, 1], 72.5, tolerance = 1e-06)
+  expect_equal(output1$`Test 2`[1, 1], 70.0, tolerance = 1e-06)
+  expect_equal(output1$`Test 2`[2, 1], 77.5, tolerance = 1e-06)
 
   # Test 2: conf.2t (LR)
 
   output1 <- matrixify(conf.lr(dat))
 
   expect_type(output1, "list")
-  expect_equal(output1$`Test 1`[1,1], 2.7, tolerance = 1e-06)
-  expect_equal(output1$`Test 1`[2,1], 0.3, tolerance = 1e-06)
-  expect_equal(output1$`Test 2`[1,1], 3.1, tolerance = 1e-06)
-  expect_equal(output1$`Test 2`[2,1], 0.4, tolerance = 1e-06)
+  expect_equal(output1$`Test 1`[1, 1], 2.7, tolerance = 1e-06)
+  expect_equal(output1$`Test 1`[2, 1], 0.3, tolerance = 1e-06)
+  expect_equal(output1$`Test 2`[1, 1], 3.1, tolerance = 1e-06)
+  expect_equal(output1$`Test 2`[2, 1], 0.4, tolerance = 1e-06)
 
   # Test 3: conf.1t (not LR)
 
-  test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+  test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
   gold <- c(rep(1, 400), rep(0, 200))
 
   df <- data.frame(test1, gold)
@@ -1000,21 +1058,20 @@ test_that("matrixify function tests", {
   output1 <- matrixify(conf.acc(dat))
 
   expect_type(output1, "double")
-  expect_equal(output1[1,1], 75.0, tolerance = 1e-06)
-  expect_equal(output1[2,1], 72.5, tolerance = 1e-06)
+  expect_equal(output1[1, 1], 75.0, tolerance = 1e-06)
+  expect_equal(output1[2, 1], 72.5, tolerance = 1e-06)
 
   # Test 4: conf.1t (LR)
 
   output1 <- matrixify(conf.lr(dat))
 
   expect_type(output1, "double")
-  expect_equal(output1[1,1], 2.7, tolerance = 1e-06)
-  expect_equal(output1[2,1], 0.3, tolerance = 1e-06)
+  expect_equal(output1[1, 1], 2.7, tolerance = 1e-06)
+  expect_equal(output1[2, 1], 0.3, tolerance = 1e-06)
 
   # Test 5: prev
 
   output1 <- matrixify(conf.prev(dat))
 
   expect_type(output1, "double")
-
 })

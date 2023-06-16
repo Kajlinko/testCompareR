@@ -7,17 +7,22 @@
 conf.pv(vals, alpha = 0.05, ...)
 }
 \arguments{
-\item{vals}{A list object containing all values required for calculations with class `vals.1test` or `vals.2test`. These objects are output by the `values.1test()` and `values.2test()` function.}
+\item{vals}{A list object containing all values required for calculations
+with class `vals.1test` or `vals.2test`. These objects are output by the
+`values.1test()` and `values.2test()` function.}
 
 \item{alpha}{An alpha value. Defaults to 0.05.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
-A list object of class `'conf.1t'` or `'conf.2t'` containing point estimates, plus lower and upper confidence bounds for predictive values.
+A list object of class `'conf.1t'` or `'conf.2t'` containing point
+estimates, plus lower and upper confidence bounds for predictive values.
 }
 \description{
-Calculates confidence intervals for positive and negative predictive values for one or two binary diagnostic tests.
+Calculates confidence intervals for positive and negative
+predictive values for one or two binary diagnostic tests.
 }
 \examples{
 # load data

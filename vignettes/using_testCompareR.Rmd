@@ -32,16 +32,8 @@ Here we demonstrate the implementation of the testCompareR package.
 
 The package comes with a data set derived from the Cystic Fibrosis Patient Registry. The data was originally presented in the paper 'Comparing the predictive values of diagnostic tests: sample size and analysis for paired study designs' by Moskowitz and Pepe. Two binary prognostic factors are evaluated as predictors of severe infection in cystic fibrosis patients. 
 
-The data can be loaded using the `data()` function.
-
-**Here I have simulated data because data() is not working**
-
 ```{r}
-test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
-test2 <- c(rep(1,280), rep(0,120), rep(1, 45), rep(0,155))
-gold <- c(rep(1, 400), rep(0, 200))
-
-dat <- data.frame(test1, test2, gold)
+dat <- cfpr
 ```
 
 ## Using the compareR function
@@ -80,18 +72,16 @@ POSITIVE: positive, pos, p, yes, y, true, t, +, 1
 NEGATIVE: negative, neg, no, n, false, f, -, 0, 2
 
 ```{r}
-
 # create data frame with varied coding
 df <- data.frame(
-test1 = c(" positive ", "POS ", " n ", "N ", " 1 ", "+"),
-test2 = c(" NEG ", " yes ", " negative", " Y ", "-", " 0 "),
-gold = c(0, 1, 0, 1, 2, 1)
+  test1 = c(" positive ", "POS ", " n ", "N ", " 1 ", "+"),
+  test2 = c(" NEG ", " yes ", " negative", " Y ", "-", " 0 "),
+  gold = c(0, 1, 0, 1, 2, 1)
 )
 
 # recode the dataframe
 recoded <- testCompareR:::recoder(df)
 recoded
-
 ```
 
 There are two things that `compareR()` cannot handle. 
@@ -106,10 +96,9 @@ If you're using `testCompareR` because you're not statistically savvy and you wa
 If you have a good reason, or you're just messing around, feel free to change it to whatever you'd like, though.
 
 ```{r}
-
 # simulate data
-test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
 gold <- c(rep(1, 400), rep(0, 200))
 
 df <- data.frame(test1, test2, gold)
@@ -119,7 +108,6 @@ result <- compareR(df, alpha = 0.5)
 
 # all results are significant
 interpretR(result)
-
 ```
 
 ### Margins
@@ -128,8 +116,8 @@ Contingency tables are included in the readout from `compareR()` or `interpretR`
 
 ```{r}
 # simulate data
-test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
 gold <- c(rep(1, 400), rep(0, 200))
 
 df <- data.frame(test1, test2, gold)
@@ -139,20 +127,18 @@ result <- compareR(df, margins = TRUE)
 
 # contingency tables have margins
 result$cont
-
 ```
 ### Multiple testing
 
 By default `compareR()` runs a minimum of three hypothesis tests and it can perform up to nine. This is accounted for using adjusted p-values according to the Holm method. If you'd prefer to use a different method, that's no problem. Just set the `multi_corr` parameter to any of the methods which are handled by the base R function `p.adjust()`.
 
 ```{r}
-
 # display p.adjust.methods
 p.adjust.methods
 
 # simulate data
-test1 <- c(rep(1,300), rep(0,100), rep(1, 65), rep(0,135))
-test2 <- c(rep(1,280), rep(0,120), rep(1, 55), rep(0,145))
+test1 <- c(rep(1, 300), rep(0, 100), rep(1, 65), rep(0, 135))
+test2 <- c(rep(1, 280), rep(0, 120), rep(1, 55), rep(0, 145))
 gold <- c(rep(1, 400), rep(0, 200))
 
 df <- data.frame(test1, test2, gold)
@@ -163,7 +149,6 @@ result2 <- compareR(df, multi_corr = "bonf")
 
 # the more restrictive Bonferroni method returns higher adjusted p values
 result1$pv$glob.p.adj < result2$pv$glob.p.adj
-
 ```
 
 ### Continuity correction
@@ -171,10 +156,9 @@ result1$pv$glob.p.adj < result2$pv$glob.p.adj
 In certain circumstances `compareR()` uses McNemar's test for testing differences in diagnostic accuracies. This test is routinely performed with continuity correction. If you wish to perform it without continuity correction then set `cc = FALSE`. If you aren't sure whether to run the test with or without continuity correction, then stick to the default parameters.
 
 ```{r}
-
 # simulate data
-test1 <- c(rep(1,6), rep(0,2), rep(1, 14), rep(0,76))
-test2 <- c(rep(1,1), rep(0,7), rep(1, 2), rep(0,88))
+test1 <- c(rep(1, 6), rep(0, 2), rep(1, 14), rep(0, 76))
+test2 <- c(rep(1, 1), rep(0, 7), rep(1, 2), rep(0, 88))
 gold <- c(rep(1, 8), rep(0, 90))
 
 df <- data.frame(test1, test2, gold)
@@ -182,7 +166,6 @@ df <- data.frame(test1, test2, gold)
 # run compareR without continuity correction
 result <- compareR(df, cc = FALSE)
 result$acc
-
 ```
 
 ### Decimal places
@@ -190,10 +173,9 @@ result$acc
 You can change the number of decimal places displayed in the summary tables which are output by both the `compareR()` and `interpretR()` functions with the `dp` parameter. This parameter does not affect the number of decimal places displayed for p values or test statistics.
 
 ```{r}
-
 # simulate data
-test1 <- c(rep(1,317), rep(0,83), rep(1, 68), rep(0,132))
-test2 <- c(rep(1,281), rep(0,119), rep(1, 51), rep(0,149))
+test1 <- c(rep(1, 317), rep(0, 83), rep(1, 68), rep(0, 132))
+test2 <- c(rep(1, 281), rep(0, 119), rep(1, 51), rep(0, 149))
 gold <- c(rep(1, 390), rep(0, 210))
 
 df <- data.frame(test1, test2, gold)
@@ -203,7 +185,6 @@ result <- compareR(df, dp = 3)
 
 # the values in the summary tables are displayed to 3 decimal places
 result$acc$accuracies
-
 ```
 
 ### Choosing your tests
@@ -213,10 +194,9 @@ Another important aspect of the `testCompareR` package is the ability to control
 You can ask `compareR()` not to display the results by setting the parameters for any pairs of tests which aren't of interest to you to `FALSE`. The parameters are as follows: `sesp` for diagnostic accuracies; `ppvnpv` for predictive values; `plrnlr` for likelihood ratios.
 
 ```{r}
-
 # simulate data
-test1 <- c(rep(1,317), rep(0,83), rep(1, 68), rep(0,132))
-test2 <- c(rep(1,281), rep(0,119), rep(1, 51), rep(0,149))
+test1 <- c(rep(1, 317), rep(0, 83), rep(1, 68), rep(0, 132))
+test2 <- c(rep(1, 281), rep(0, 119), rep(1, 51), rep(0, 149))
 gold <- c(rep(1, 390), rep(0, 210))
 
 df <- data.frame(test1, test2, gold)
@@ -224,7 +204,6 @@ df <- data.frame(test1, test2, gold)
 # only display results for predictive values
 result <- compareR(df, sesp = FALSE, plrnlr = FALSE)
 result
-
 ```
 
 ### Test names
@@ -234,8 +213,8 @@ If you want specific test names to be included in the output for `compareR()` th
 
 ```{r}
 # simulate data
-test1 <- c(rep(1,317), rep(0,83), rep(1, 68), rep(0,132))
-test2 <- c(rep(1,281), rep(0,119), rep(1, 51), rep(0,149))
+test1 <- c(rep(1, 317), rep(0, 83), rep(1, 68), rep(0, 132))
+test2 <- c(rep(1, 281), rep(0, 119), rep(1, 51), rep(0, 149))
 gold <- c(rep(1, 390), rep(0, 210))
 
 df <- data.frame(test1, test2, gold)
@@ -243,7 +222,6 @@ df <- data.frame(test1, test2, gold)
 # only display results for predictive values
 result <- compareR(df, test.names = c("POCT", "Lab Blood"))
 result$acc$accuracies
-
 ```
 
 ## Conclusion

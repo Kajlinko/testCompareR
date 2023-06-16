@@ -7,14 +7,18 @@
 conf.prev(vals, alpha = 0.05, ...)
 }
 \arguments{
-\item{vals}{A list object containing all values required for calculations with class `vals.1test` or `vals.2test`. These objects are output by the `values.1test()` and `values.2test()` function.}
+\item{vals}{A list object containing all values required for calculations
+with class `vals.1test` or `vals.2test`. These objects are output by the
+`values.1test()` and `values.2test()` function.}
 
 \item{alpha}{An alpha value. Defaults to 0.05.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
-A list object of class `'prev'` containing a point estimate, plus lower and upper confidence bounds for disease prevalence.
+A list object of class `'prev'` containing a point estimate, plus
+lower and upper confidence bounds for disease prevalence.
 }
 \description{
 Calculates confidence intervals for disease prevalence.

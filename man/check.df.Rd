@@ -7,13 +7,20 @@
 check.df(df)
 }
 \arguments{
-\item{df}{A data frame with two or three columns. Users may code positive results as strings (positive, pos, p, yes, y, +, 1), numeric (1) or factor (1). Users may code positive results as strings (negative, neg, no, n, -, 0, 2), numeric (0, 2) or factor (0, 2). Case and white space insensitive.}
+\item{df}{A data frame with two or three columns. Users may code positive
+results as strings (positive, pos, p, yes, y, +, 1), numeric (1) or
+factor (1). Users may code positive results as strings (negative, neg, no,
+n, -, 0, 2), numeric (0, 2) or factor (0, 2). Case and white space
+insensitive.}
 }
 \value{
-A Boolean value indicating whether all entries in the data frame meet the requirements described in arguments.
+A Boolean value indicating whether all entries in the data frame meet
+the requirements described in arguments.
 }
 \description{
-Takes a data frame with two or three columns containing the results of binary diagnostic test(s) and a gold standard test and checks it conforms to standards required for the compareR function.
+Takes a data frame with two or three columns containing the
+results of binary diagnostic test(s) and a gold standard test and checks it
+conforms to standards required for the compareR function.
 }
 \examples{
 # simulate data
