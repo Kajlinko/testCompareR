@@ -7,24 +7,33 @@
 summariseR(df, dp = 1)
 }
 \arguments{
-\item{df}{A data frame or matrix with 2 columns (test1, gold). Flexible coding of positive and negative results permitted.}
+\item{df}{A data frame or matrix with 2 columns (test1, gold). Flexible
+coding of positive and negative results permitted.}
 
-\item{dp}{Number of decimal places of output in summary tables. Defaults to 1. Kappa defaults to 3 decimal places unless user selects more.}
+\item{dp}{Number of decimal places of output in summary tables. Defaults
+to 1. Kappa defaults to 3 decimal places unless user selects more.}
 }
 \value{
-A summary of the descriptive statistics of a binary diagnostic test, compared to a gold standard.
+A summary of the descriptive statistics of a binary diagnostic test,
+compared to a gold standard.
 }
 \description{
-Summarises descriptive statistics associated with a single binary diagnostic test.
+Summarises descriptive statistics associated with a single
+binary diagnostic test.
 }
 \details{
-Confidence intervals for prevalence, diagnostic accuracies and predictive values are calculated using the interval for binomial proportions described by Yu et al. (2014).
-Confidence intervals for likelihood ratios are calculated using the methods recommended by Martín-Andrés and Álvarez-Hernández (2014).
-Cohen's kappa is a value between -1 and 1 which describes the agreement of the two tests, taking account of random agreement. A score of zero indicates the agreement could be entirely due to chance.
+Confidence intervals for prevalence, diagnostic accuracies and predictive
+values are calculated using the interval for binomial proportions described
+by Yu et al. (2014).
+Confidence intervals for likelihood ratios are calculated using the methods
+recommended by Martín-Andrés and Álvarez-Hernández (2014).
+Cohen's kappa is a value between -1 and 1 which describes the agreement of
+the two tests, taking account of random agreement. A score of zero or less
+indicates the agreement could be entirely due to chance.
 }
 \examples{
 # simulate data
-test1 <- c(rep(1,300), rep(0,100), rep(1, 55), rep(0,145))
+test1 <- c(rep(1, 300), rep(0, 100), rep(1, 55), rep(0, 145))
 gold <- c(rep(1, 400), rep(0, 200))
 dat <- data.frame(test1, gold)
 

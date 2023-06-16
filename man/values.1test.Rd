@@ -7,13 +7,15 @@
 values.1test(df)
 }
 \arguments{
-\item{df}{A dataframe with 2 columns (test1, gold), populated with zeros and ones.}
+\item{df}{A dataframe with 2 columns (test1, gold), populated with zeros and
+ones.}
 }
 \value{
 A list object containing important values for future calculations.
 }
 \description{
-Creates a list object containing important values for future calculations.
+Creates a list object containing important values for future
+calculations.
 }
 \examples{
 # load data

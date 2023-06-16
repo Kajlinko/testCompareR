@@ -13,13 +13,15 @@ yu.int(n, z, est)
 
 \item{est}{The point estimate of the specific test under evaluation.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
 A list object containing lower and upper confidence bounds.
 }
 \description{
-Calculates the Yu et al. confidence interval for binomial proportions.
+Calculates the Yu et al. confidence interval for binomial
+proportions.
 }
 \examples{
 # load data

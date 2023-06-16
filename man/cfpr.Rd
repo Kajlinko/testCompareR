@@ -7,14 +7,16 @@
 \format{
 A data frame with 11,960 rows and 3 columns:
 \describe{
-  \item{pulm.exac}{Presence or absence of previous pulmonary exacerbations.}
-  \item{pseudomonas}{Presence or absence of Pseudomonas aeruginosa infection.}
+  \item{pulm.exac}{Presence or absence of previous pulmonary exacerbation.}
+  \item{pseudomonas}{Presence or absence of Pseudomonas aeruginosa
+  infection.}
   \item{infection}{Presence or absence of severe infection (gold standard).}
 }
 }
 \source{
-Data was sourced directly from the referenced paper. For up-to-date data requests contact:
-\href{https://www.cff.org/researchers/patient-registry-data-requests}
+Data was sourced directly from the referenced paper. For up-to-date data
+requests contact:
+\href{https://www.cff.org/researchers/patient-registry-data-requests}{Cystic Fibrosis Foundation}
 }
 \usage{
 cfpr

@@ -7,17 +7,23 @@
 disp.cont(vals, margins = FALSE, ...)
 }
 \arguments{
-\item{vals}{A list object containing all values required for calculations with class `'vals.1test'` or `'vals.2test'`. These objects are output by the `values.1test()` and `values.2test()` function.}
+\item{vals}{A list object containing all values required for calculations
+with class `'vals.1test'` or `'vals.2test'`. These objects are output by the
+`values.1test()` and `values.2test()` function.}
 
-\item{margins}{A Boolean value indicating whether the outputted matrix should have margins containing summed totals of rows and columns.}
+\item{margins}{A Boolean value indicating whether the outputted matrix should
+have margins containing summed totals of rows and columns.}
 
-\item{...}{Rarely needs to be used. Allows additional arguments to be passed to internal functions.}
+\item{...}{Rarely needs to be used. Allows additional arguments to be passed
+to internal functions.}
 }
 \value{
-Either a matrix or list of matrices displaying counts of positive and negative tests by true disease status.
+Either a matrix or list of matrices displaying counts of positive and
+negative tests by true disease status.
 }
 \description{
-Creates and displays a contingency table of positive and negative test results and disease status.
+Creates and displays a contingency table of positive and
+negative test results and disease status.
 }
 \examples{
 # load data
