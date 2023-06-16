@@ -34,11 +34,11 @@ result <- summariseR(dat, dp = 4)
 }
 \references{
 Yu, Guo & Xu (2014) JSCS. 2014; 84:5,1022-1038
-(\href{https://dx.doi.org/10.1080/00949655.2012.738211}{JSCS})
+\doi{10.1080/00949655.2012.738211}
 
 Martín Andrés & Álvarez Hernández (2014) Stat Comput. 2014; 24,65–75
-(\href{https://doi.org/10.1007/s11222-012-9353-5}{Stat Comput})
+\doi{10.1007/s11222-012-9353-5}
 
 Cohen (1960) Educ Psychol Meas. 1960; 20(1),37–46
-(\href{https://doi.org/10.1177/001316446002000104}{Educ Psychol Meas})
+\doi{10.1177/001316446002000104}
 }

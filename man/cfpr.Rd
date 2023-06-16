@@ -14,7 +14,7 @@ A data frame with 11,960 rows and 3 columns:
 }
 \source{
 Data was sourced directly from the referenced paper. For up-to-date data requests contact:
-<https://www.cff.org/researchers/patient-registry-data-requests>
+\href{https://www.cff.org/researchers/patient-registry-data-requests}
 }
 \usage{
 cfpr
@@ -37,6 +37,6 @@ This data was originally presented in Moskowitz and Pepe (2006).
 }
 \references{
 Moskowitz and Pepe (2006) Clinical Trials. 2006;3(3):272-9.
-(\href{https://pubmed.ncbi.nlm.nih.gov/16895044/}{PubMed})
+\doi{10.1191/1740774506cn147oa}
 }
 \keyword{datasets}
