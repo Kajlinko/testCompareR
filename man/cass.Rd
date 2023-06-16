@@ -13,8 +13,7 @@ A data frame with 871 rows and 3 columns:
 }
 }
 \source{
-Data was sourced directly from the referenced paper.
-<https://doi.org/10.1056/NEJM197908023010502>
+\doi{10.1056/NEJM197908023010502}
 }
 \usage{
 cass
@@ -33,6 +32,6 @@ This data was originally presented in Weiner et al. (1979).
 }
 \references{
 Weiner et al. (1979)) N Engl J Med. 1979;301(5):230-5
-(\href{https://doi.org/10.1056/NEJM197908023010502}{N Engl J Med})
+\doi{10.1056/NEJM197908023010502}
 }
 \keyword{datasets}

@@ -25,11 +25,11 @@
 #' @keywords datasets
 #'
 #' @references Moskowitz and Pepe (2006) Clinical Trials. 2006;3(3):272-9.
-#' (\href{https://pubmed.ncbi.nlm.nih.gov/16895044/}{PubMed})
+#' \doi{10.1191/1740774506cn147oa}
 #'
 #' @source
 #' Data was sourced directly from the referenced paper. For up-to-date data requests contact:
-#' <https://www.cff.org/researchers/patient-registry-data-requests>
+#' \href{https://www.cff.org/researchers/patient-registry-data-requests}{Cystic Fibrosis Foundation}
 "cfpr"
 
 #' Coronary Artery Surgery Study data
@@ -55,9 +55,8 @@
 #' @keywords datasets
 #'
 #' @references Weiner et al. (1979)) N Engl J Med. 1979;301(5):230-5
-#' (\href{https://doi.org/10.1056/NEJM197908023010502}{N Engl J Med})
+#' \doi{10.1056/NEJM197908023010502}
 #'
 #' @source
-#' Data was sourced directly from the referenced paper.
-#' <https://doi.org/10.1056/NEJM197908023010502>
+#' \doi{10.1056/NEJM197908023010502}
 "cass"

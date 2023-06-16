@@ -32,25 +32,25 @@
 #'
 #' @references
 #' Yu, Guo & Xu (2014) JSCS. 2014; 84:5,1022-1038
-#' (\href{https://dx.doi.org/10.1080/00949655.2012.738211}{JSCS})
+#' \doi{10.1080/00949655.2012.738211}
 #'
 #' Martín Andrés & Álvarez Hernández (2014) Stat Comput. 2014; 24,65–75
-#' (\href{https://doi.org/10.1007/s11222-012-9353-5}{Stat Comput})
+#' \doi{10.1007/s11222-012-9353-5}
 #'
 #' Roldán-Nofuentes & Sidaty-Regad (2019) JSCS. 2019; 89:14,2621-2644
-#' (\href{https://doi.org/10.1080/00949655.2019.1628234}{JSCS})
+#' \doi{10.1080/00949655.2019.1628234}
 #'
 #' Roldán-Nofuentes, Luna del Castillo & Montero-Alonso (2012) Comput Stat Data Anal. 2012; 6,1161–1173.
-#' (href{https://doi.org/10.1016/j.csda.2011.06.003}{Comput Stat Data Anal})
+#' \doi{10.1016/j.csda.2011.06.003}
 #'
 #' Kosinski (2012) Stat Med. 2012; 32,964-977
-#' (\href{https://doi.org/10.1002/sim.5587}{Stat Med})
+#' \doi{10.1002/sim.5587}
 #'
 #' Roldán-Nofuentes, Luna del Castillo (2007) Stat Med. 2007; 26:4179–201.
-#' (\href{https://doi.org/10.1002/sim.2850}{Stat Med})
+#' \doi{10.1002/sim.2850}
 #'
 #' Roldán-Nofuentes (2020) BMC Med Res Methodol. 2020; 20,143
-#' (\href{https://doi.org/10.1186/s12874-020-00988-y}{BMC Med Res Methodol})
+#' \doi{10.1186/s12874-020-00988-y}
 #'
 #' @examples
 #' # load data
