@@ -19,6 +19,13 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
   Maintainer: 'Kyle J. Wilson <kyle.jordan.wilson@googlemail.com>'
   
   New submission
+  
+  Possibly misspelled words in DESCRIPTION:
+    Nofuentes (13:203)
+    
+  The name Roldán-Nofuentes is correctly spelled. I have cross-referenced 
+  academic articles and the website for Unversidad de Granada.
+    
 
 ❯ On windows-x86_64-devel (r-devel)
   checking for non-standard things in the check directory ... NOTE
@@ -41,10 +48,17 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
   [Github](https://github.com/r-hub/rhub/issues/503). Advice is to ignore.
 
 ❯ On ubuntu-gcc-release (r-release)
-  checking CRAN incoming feasibility ... [5s/14s] NOTE
+  checking CRAN incoming feasibility ... [5s/12s] NOTE
   Maintainer: ‘Kyle J. Wilson <kyle.jordan.wilson@googlemail.com>’
   
   New submission
+  
+  Possibly misspelled words in DESCRIPTION:
+    Nofuentes (13:202)
+    Roldán (13:195)
+    
+  The name Roldán-Nofuentes is correctly spelled. I have cross-referenced 
+  academic articles and the website for Unversidad de Granada.
 
 ❯ On ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
   checking HTML version of manual ... NOTE
@@ -54,9 +68,16 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
   external Fedora Linux server. Ignoring this note. 
 
 ❯ On fedora-clang-devel (r-devel)
-  checking CRAN incoming feasibility ... [6s/14s] NOTE
+  checking CRAN incoming feasibility ... [6s/12s] NOTE
   Maintainer: ‘Kyle J. Wilson <kyle.jordan.wilson@googlemail.com>’
   
   New submission
+  
+  Possibly misspelled words in DESCRIPTION:
+    Nofuentes (13:202)
+    Roldán (13:195)
+    
+  The name Roldán-Nofuentes is correctly spelled. I have cross-referenced 
+  academic articles and the website for Unversidad de Granada.
 
 0 errors ✔ | 0 warnings ✔ | 6 notes ✖
