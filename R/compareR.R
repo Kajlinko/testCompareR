@@ -33,24 +33,6 @@
 #' @return A list object summarising all calculated descriptive and
 #' inferential statistics.
 #'
-#' $cont: contains contigency tables of test results for positive and negative
-#' disease states
-#' $prev: displays a matrix of descriptive statistics for disease prevalence
-#' $acc: $accuracies contains matrices of descriptive statistics for Test 1 and
-#' Test 2. Additionally, the test statistic, p value and adjusted p value are
-#' reported for the global hypothesis test and each of the two individual
-#' hypothesis tests.
-#' $pv: $predictive.values contains matrices of descriptive statistics for
-#' Test 1 and Test 2. Additionally, the test statistic, p value and adjusted p
-#' value are reported for the global hypothesis test and each of the two
-#' individual hypothesis tests.
-#' $lr: $likelihood.ratios contains matrices of descriptive statistics for
-#' Test 1 and Test 2. Additionally, the test statistic, p value and adjusted p
-#' value are reported for the global hypothesis test and each of the two
-#' individual hypothesis tests.
-#' $other: stores useful values to pass to `interpretR()`
-#'
-#'
 #' @details
 #' Confidence intervals for prevalence, diagnostic accuracies and predictive
 #' values are calculated using the interval for binomial proportions described
