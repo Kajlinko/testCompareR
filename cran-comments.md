@@ -81,3 +81,14 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
   academic articles and the website for Unversidad de Granada.
 
 0 errors ✔ | 0 warnings ✔ | 6 notes ✖
+
+## Resubmission
+
+"Using foo:::f instead of foo::f allows access to unexported objects.
+This is generally not recommended, as the semantics of unexported
+objects may be changed by the package author in routine maintenance."
+
+I have now modified the examples for all internal functions to avoid this 
+practice.
+
+Thanks for the speedy review!

@@ -24,17 +24,24 @@ Calculates the Yu et al. confidence interval for binomial
 proportions.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # set value of z
 z <- qnorm(1 - 0.05 / 2)
 
 # compute Yu interval for disease prevalence
-testCompareR:::yu.int(vals$n, z, vals$prev)
+yu.int(vals$n, z, vals$prev)
+
+}
 
 }
 \keyword{internal}

@@ -23,6 +23,11 @@ results of binary diagnostic test(s) and a gold standard test and checks it
 conforms to standards required for the compareR function.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # simulate data
 df <- data.frame(
   column1 = c(" positive ", "POS ", " n ", "N ", " 1 ", "+"),
@@ -30,8 +35,10 @@ df <- data.frame(
 )
 
 # check the dataframe
-checked <- testCompareR:::check.df(df)
+checked <- check.df(df)
 checked
+
+}
 
 }
 \keyword{internal}
