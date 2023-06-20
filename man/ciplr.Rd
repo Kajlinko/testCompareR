@@ -25,6 +25,11 @@ and upper confidence bounds for positive likelihood ratio.
 Calculates confidence intervals for positive likelihood ratio.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
@@ -32,13 +37,15 @@ df <- cfpr
 df <- subset(df, select = 2:3)
 
 # compute important values
-vals <- testCompareR:::values.1test(df)
+vals <- values.1test(df)
 
 # set value of z
 z <- qnorm(1 - 0.05 / 2)
 
 # compute confidence values for positive likelihood ratio
-testCompareR:::ciplr(vals$s1, vals$s0, vals$r1, vals$r0, z)
+ciplr(vals$s1, vals$s0, vals$r1, vals$r0, z)
+
+}
 
 }
 \keyword{internal}

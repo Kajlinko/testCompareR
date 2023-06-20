@@ -25,14 +25,21 @@ Calculates confidence intervals for positive and negative
 likelihood ratios for one or two binary diagnostic tests.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # compute confidence intervals for likelihood ratios
-testCompareR:::conf.lr(vals, alpha = 0.05)
+conf.lr(vals, alpha = 0.05)
+
+}
 
 }
 \keyword{internal}

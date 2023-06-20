@@ -36,17 +36,24 @@ and upper and lower confidence bounds for related outputs (eg. sensitivity
 and specificity) of one or two binary diagnostic tests.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # compute confidence for diagnostic accuracies
-acc <- testCompareR:::conf.acc(vals)
+acc <- conf.acc(vals)
 
 # produce a matrix summarising results
-testCompareR:::matrixify(acc)
+matrixify(acc)
+
+}
 
 }
 \keyword{internal}

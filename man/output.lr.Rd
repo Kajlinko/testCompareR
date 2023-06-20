@@ -23,14 +23,21 @@ Performs statistical inference tests on the likelihood ratios
 of two binary diagnostic tests.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # perform hypothesis tests
-testCompareR:::output.lr(vals)
+output.lr(vals)
+
+}
 
 }
 \keyword{internal}

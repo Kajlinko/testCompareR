@@ -24,14 +24,21 @@ lower and upper confidence bounds for disease prevalence.
 Calculates confidence intervals for disease prevalence.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # compute confidence intervals for disease prevalence
-testCompareR:::conf.prev(vals, alpha = 0.05)
+conf.prev(vals, alpha = 0.05)
+
+}
 
 }
 \keyword{internal}

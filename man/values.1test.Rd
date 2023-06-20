@@ -18,6 +18,11 @@ Creates a list object containing important values for future
 calculations.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
@@ -25,7 +30,9 @@ df <- cfpr
 df <- subset(df, select = 2:3)
 
 # compute important values
-testCompareR:::values.1test(df)
+values.1test(df)
+
+}
 
 }
 \keyword{internal}

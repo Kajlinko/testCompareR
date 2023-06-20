@@ -26,14 +26,21 @@ Creates and displays a contingency table of positive and
 negative test results and disease status.
 }
 \examples{
+\dontrun{
+
+# if necessary internal function calls can be made using the triple colon
+# operator, but this is not shown in examples
+
 # load data
 df <- cfpr
 
 # compute important values
-vals <- testCompareR:::values.2test(df)
+vals <- values.2test(df)
 
 # compute contingency table
-testCompareR:::disp.cont(vals, margins = TRUE)
+disp.cont(vals, margins = TRUE)
+
+}
 
 }
 \keyword{internal}
