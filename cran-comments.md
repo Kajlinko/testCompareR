@@ -82,7 +82,7 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
 
 0 errors ✔ | 0 warnings ✔ | 6 notes ✖
 
-## Resubmission
+## Resubmission 1
 
 "Using foo:::f instead of foo::f allows access to unexported objects.
 This is generally not recommended, as the semantics of unexported
@@ -92,3 +92,15 @@ I have now modified the examples for all internal functions to avoid this
 practice.
 
 Thanks for the speedy review!
+
+## Resubmission 2
+
+"You have examples for unexported functions. Please either omit these
+examples or export these functions."
+
+I have now omitted the examples for all internal functions and have 
+removed /man pages with #' @noRd. I will make the examples available in
+the development version for those who wish to access them after 
+acceptance by CRAN.
+
+Thanks again for the speedy review!
