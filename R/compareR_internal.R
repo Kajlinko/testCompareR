@@ -19,22 +19,7 @@
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # simulate data
-#' df <- data.frame(
-#'   column1 = c(" positive ", "POS ", " n ", "N ", " 1 ", "+"),
-#'   column2 = c(" NEG ", " yes ", " negative ", " Y ", "-", " 0 ")
-#' )
-#'
-#' # check the dataframe
-#' checked <- check.df(df)
-#' checked
-#'
-#' }
+#' @noRd
 #'
 check.df <- function(df) {
   # convert matrices to data frame
@@ -109,22 +94,7 @@ check.df <- function(df) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # simulate data
-#' df <- data.frame(
-#'   column1 = c(" positive ", "POS ", " n ", "N ", " 1 ", "+"),
-#'   column2 = c(" NEG ", " yes ", " negative ", " Y ", "-", " 0 ")
-#' )
-#'
-#' # recode the dataframe
-#' recoded_df <- recoder(df)
-#' recoded_df
-#'
-#' }
+#' @noRd
 #'
 recoder <- function(df) {
   df <- check.df(df)
@@ -162,21 +132,7 @@ recoder <- function(df) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # drop first column
-#' df <- subset(df, select = 2:3)
-#'
-#' # compute important values
-#' values.1test(df)
-#'
-#' }
+#' @noRd
 #'
 values.1test <- function(df) {
   ## CHECK ARGUMENTS
@@ -255,18 +211,7 @@ values.1test <- function(df) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' values.2test(df)
-#'
-#' }
+#' @noRd
 #'
 values.2test <- function(df) {
   ## CHECK ARGUMENTS
@@ -379,21 +324,7 @@ values.2test <- function(df) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute contingency table
-#' disp.cont(vals, margins = TRUE)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "addmargins"
 #'
@@ -463,24 +394,7 @@ disp.cont <- function(vals, margins = FALSE, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # set value of z
-#' z <- qnorm(1 - 0.05 / 2)
-#'
-#' # compute Yu interval for disease prevalence
-#' yu.int(vals$n, z, vals$prev)
-#'
-#'}
+#' @noRd
 #'
 yu.int <- function(n, z, est) {
   # CHECK ARGUMENTS
@@ -529,21 +443,7 @@ yu.int <- function(n, z, est) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute confidence intervals for disease prevalence
-#' conf.prev(vals, alpha = 0.05)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "qnorm"
 
@@ -598,21 +498,7 @@ conf.prev <- function(vals, alpha = 0.05, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute confidence intervals for diagnostic accuracies
-#' conf.acc(vals, alpha = 0.05)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "qnorm"
 
@@ -709,21 +595,7 @@ conf.acc <- function(vals, alpha = 0.05, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute confidence intervals for predictive values
-#' conf.pv(vals, alpha = 0.05)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "qnorm"
 
@@ -818,27 +690,7 @@ conf.pv <- function(vals, alpha = 0.05, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # drop first column
-#' df <- subset(df, select = 2:3)
-#'
-#' # compute important values
-#' vals <- values.1test(df)
-#'
-#' # set value of z
-#' z <- qnorm(1 - 0.05 / 2)
-#'
-#' # compute confidence values for positive likelihood ratio
-#' ciplr(vals$s1, vals$s0, vals$r1, vals$r0, z)
-#'
-#' }
+#' @noRd
 #'
 ciplr <- function(s1, s0, r1, r0, z) {
   ss1 <- s1 + s0
@@ -889,27 +741,7 @@ ciplr <- function(s1, s0, r1, r0, z) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # drop first column
-#' df <- subset(df, select = 2:3)
-#'
-#' # compute important values
-#' vals <- values.1test(df)
-#'
-#' # set value of z
-#' z <- qnorm(1 - 0.05 / 2)
-#'
-#' # compute confidence values for negative likelihood ratio
-#' cinlr(vals$s1, vals$s0, vals$r1, vals$r0, z)
-#'
-#' }
+#' @noRd
 #'
 cinlr <- function(s1, s0, r1, r0, z) {
   ss1 <- s1 + s0
@@ -962,21 +794,7 @@ cinlr <- function(s1, s0, r1, r0, z) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute confidence intervals for likelihood ratios
-#' conf.lr(vals, alpha = 0.05)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "qnorm"
 
@@ -1096,21 +914,7 @@ conf.lr <- function(vals, alpha = 0.05, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # perform hypothesis tests
-#' output.acc(vals)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "pchisq" "pnorm"
 
@@ -1182,21 +986,7 @@ output.acc <- function(vals, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # perform hypothesis tests
-#' output.pv(vals)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "pchisq"
 
@@ -1334,21 +1124,7 @@ output.pv <- function(vals, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # perform hypothesis tests
-#' output.lr(vals)
-#'
-#' }
+#' @noRd
 #'
 #' @importFrom stats "pchisq" "pnorm"
 
@@ -1470,24 +1246,7 @@ output.lr <- function(vals, ...) {
 #'
 #' @keywords internal
 #'
-#' @examples \dontrun{
-#'
-#' # if necessary internal function calls can be made using the triple colon
-#' # operator, but this is not shown in examples
-#'
-#' # load data
-#' df <- cfpr
-#'
-#' # compute important values
-#' vals <- values.2test(df)
-#'
-#' # compute confidence for diagnostic accuracies
-#' acc <- conf.acc(vals)
-#'
-#' # produce a matrix summarising results
-#' matrixify(acc)
-#'
-#' }
+#' @noRd
 #'
 matrixify <- function(vals, rows = c("Row 1", "Row 2"),
                       test.names = c("Test 1", "Test 2"), dp = 3) {
