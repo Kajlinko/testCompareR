@@ -52,13 +52,21 @@ summariseR <- function(df, dp = 1) {
   }
 
   df <- recoder(df)
+
   vals <- values.1test(df)
+
+  cont <- disp.cont(vals)
+
   prev <- matrixify(conf.prev(vals), dp = dp + 2)
+
   acc <- matrixify(conf.acc(vals),
     rows = c("Sensitivity", "Specificity"), dp = dp + 2
   )
+
   pv <- matrixify(conf.pv(vals), rows = c("PPV", "NPV"), dp = dp + 2)
+
   lr <- matrixify(conf.lr(vals), rows = c("PLR", "NLR"), dp = dp + 2)
+
   po <- (vals$s1 + vals$r0) / vals$n
   pe <- ((vals$s1 + vals$s0) / vals$n * (vals$s1 + vals$r1) / vals$n) +
     ((vals$r0 + vals$s0) / vals$n * (vals$r0 + vals$r1) / vals$n)
@@ -69,14 +77,15 @@ summariseR <- function(df, dp = 1) {
     kappa <- round(kappa, dp)
   }
 
+  out <- list(cont = cont,
+              prev = prev,
+              acc = acc,
+              pv = pv,
+              lr = lr,
+              kappa = kappa)
 
-  cat("\nSummary of Binary Diagnostic Test\n\nDisease Prevalence\n")
-  print(prev)
-  cat("\nDiagnostic Accuracies\n")
-  print(acc)
-  cat("\nPredictive Values\n")
-  print(pv)
-  cat("\nLikelihood Ratios\n")
-  print(lr)
-  cat("\nCohen's Kappa", kappa)
+  class(out) = "summariseR"
+
+  return(out)
+
 }
