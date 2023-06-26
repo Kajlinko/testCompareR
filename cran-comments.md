@@ -104,3 +104,19 @@ the development version for those who wish to access them after
 acceptance by CRAN.
 
 Thanks again for the speedy review!
+
+## Resubmission 3
+
+"You write information messages to the console that cannot be easily suppressed. 
+It is more R like to generate objects that can be used to extract the 
+information a user is interested in, and then print() that object.
+Instead of print()/cat() rather use message()/warning()  or if(verbose)cat(..) 
+(or maybe stop()) if you really have to write text to the console.
+(except for print, summary, interactive functions)"
+
+I have modified the `summariseR` function to return an object.
+
+PLEASE NOTE: `interpretR()` is a print function, and modifying it to not print
+would remove its functionality.
+
+Thanks for the feedback!
