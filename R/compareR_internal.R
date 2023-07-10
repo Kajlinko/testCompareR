@@ -1126,7 +1126,7 @@ output.pv <- function(vals, ...) {
 #'
 #' @noRd
 #'
-#' @importFrom stats "pchisq"
+#' @importFrom stats "pchisq" "pnorm"
 
 output.lr <- function(vals, ...) {
   ## CHECK ARGUMENTS
@@ -1210,8 +1210,8 @@ output.lr <- function(vals, ...) {
   z1 <- abs(logposw) / sqrt(sigmaLR[1, 1])
   z2 <- abs(lognegw) / sqrt(sigmaLR[2, 2])
 
-  pvalue7 <- 2 * (1 - pchisq(z1, 1, ...))
-  pvalue8 <- 2 * (1 - pchisq(z2, 1, ...))
+  pvalue7 <- 2 * (1 - pnorm(z1, 1, ...))
+  pvalue8 <- 2 * (1 - pnorm(z2, 1, ...))
 
   return(list(
     glob.t = Q3, glob.p = globalpvalue3,
