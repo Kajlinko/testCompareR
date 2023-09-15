@@ -942,22 +942,22 @@ output.acc <- function(vals, ...) {
   w2 <- (vals$rr * (vals$r10 - vals$r01)^2) / (4 * vals$r10 * vals$r01 +
     (vals$r11 + vals$r00) * (vals$r10 + vals$r01))
 
-  pvalue1 <- 2 * (1 - pchisq(w1, 1, ...))
-  pvalue2 <- 2 * (1 - pchisq(w2, 1, ...))
+  pvalue1 <- 1 - pchisq(w1, 1, ...)
+  pvalue2 <- 1 - pchisq(w2, 1, ...)
 
   ## MCNEMARS CHI-SQUARED AND P-VALUES
 
   Mcc1 <- (abs(vals$s10 - vals$s01) - 1)^2 / (vals$s10 + vals$s01)
   Mcc2 <- (abs(vals$r10 - vals$r01) - 1)^2 / (vals$r10 + vals$r01)
 
-  pvalue3a <- 2 * (1 - pchisq(Mcc1, 1, ...))
-  pvalue4a <- 2 * (1 - pchisq(Mcc2, 1, ...))
+  pvalue3a <- 1 - pchisq(Mcc1, 1, ...)
+  pvalue4a <- 1 - pchisq(Mcc2, 1, ...)
 
   M1 <- abs(vals$s10 - vals$s01)^2 / (vals$s10 + vals$s01)
   M2 <- abs(vals$r10 - vals$r01)^2 / (vals$r10 + vals$r01)
 
-  pvalue3b <- 2 * (1 - pchisq(M1, 1, ...))
-  pvalue4b <- 2 * (1 - pchisq(M2, 1, ...))
+  pvalue3b <- 1 - pchisq(M1, 1, ...)
+  pvalue4b <- 1 - pchisq(M2, 1, ...)
 
   return(list(
     glob.t = Q1, glob.p = globalpvalue1,
@@ -1210,8 +1210,8 @@ output.lr <- function(vals, ...) {
   z1 <- abs(logposw) / sqrt(sigmaLR[1, 1])
   z2 <- abs(lognegw) / sqrt(sigmaLR[2, 2])
 
-  pvalue7 <- 2 * (1 - pnorm(z1, 1, ...))
-  pvalue8 <- 2 * (1 - pnorm(z2, 1, ...))
+  pvalue7 <- 2 * (1 - pnorm(z1, 0, 1, ...))
+  pvalue8 <- 2 * (1 - pnorm(z2, 0, 1, ...))
 
   return(list(
     glob.t = Q3, glob.p = globalpvalue3,
