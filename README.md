@@ -83,7 +83,7 @@ Additionally, the statistical methods underlying this package and the source cod
 
 ## License
 
-This work is licensed under the General Public License v2.0 (1999). See LICENSE.md for more details.
+This work is licensed under the General Public License v3.0 (2007). See LICENSE.md for more details.
 
 ## References
 
