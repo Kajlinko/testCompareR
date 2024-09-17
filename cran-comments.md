@@ -165,3 +165,14 @@ For a CRAN submission we recommend that you fix all NOTEs, WARNINGs and ERRORs.
   external Fedora Linux server. Ignoring this note. 
 
 0 errors ✔ | 0 warnings ✔ | 3 notes ✖
+
+# Update 2. v1.0.3
+
+── R CMD check results ─────────────────────────────────────────────────────────
+── testCompareR 1.0.3  ─────────────────────────────────────────────────────────
+Duration: 51.2s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+Checks run using rhub v2. 
+See https://github.com/Kajlinko/testCompareR/actions for output.

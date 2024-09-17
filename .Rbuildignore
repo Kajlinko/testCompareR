@@ -1,5 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.Rhistory$
 ^simulations
 ^development
 ^benchmarking
@@ -10,3 +11,4 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^revdep
