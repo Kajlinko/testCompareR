@@ -1,3 +1,5 @@
+# testCompareR 1.0.5
+
 # testCompareR 1.0.4
 
 * Updated error message when sesp, ppvnpv and plrnlr are all FALSE for clarity
