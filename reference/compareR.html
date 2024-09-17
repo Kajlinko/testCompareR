@@ -11,7 +11,7 @@ multiple comparisons using methods in `p.adjust()`."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">testCompareR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@ multiple comparisons using methods in `p.adjust()`."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Kajlinko/testCompareR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -36,7 +37,7 @@ multiple comparisons using methods in `p.adjust()`."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>compareR</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/Kajlinko/testCompareR/blob/main/R/compareR.R" class="external-link"><code>R/compareR.R</code></a></small>
       <div class="d-none name"><code>compareR.Rd</code></div>
     </div>
 
@@ -58,6 +59,7 @@ multiple comparisons using methods in `p.adjust()`.</p>
 <span>  sesp <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ppvnpv <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  plrnlr <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  conf.int <span class="op">=</span> <span class="st">"contemporary"</span>,</span>
 <span>  test.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Test 1"</span>, <span class="st">"Test 2"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -110,6 +112,12 @@ positive and negative predictive values.</p></dd>
 positive and negative likelihood ratios.</p></dd>
 
 
+<dt id="arg-conf-int">conf.int<a class="anchor" aria-label="anchor" href="#arg-conf-int"></a></dt>
+<dd><p>A character string, either "contemporary" or "classic".
+Indicates whether function should use contemporary or classic statistical
+methods to calculate confidence intervals.</p></dd>
+
+
 <dt id="arg-test-names">test.names<a class="anchor" aria-label="anchor" href="#arg-test-names"></a></dt>
 <dd><p>A vector of length two giving the names of the two
 different binary diagnostic tests. This argument is not relevant when testing
@@ -130,7 +138,8 @@ inferential statistics.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Confidence intervals for prevalence, diagnostic accuracies and predictive
 values are calculated using the interval for binomial proportions described
-by Yu et al. (2014).
+by Yu et al. (2014) by default. Setting conf.int = "classic" uses the
+Clopper-Pearson method.
 Confidence intervals for likelihood ratios are calculated using the methods
 recommended by Martín-Andrés and Álvarez-Hernández (2014).
 Hypothesis testing for diagnostic accuracies uses different methods depending
@@ -152,6 +161,8 @@ package.</p>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Yu, Guo &amp; Xu (2014) JSCS. 2014; 84:5,1022-1038
 <a href="https://doi.org/10.1080/00949655.2012.738211" class="external-link">doi:10.1080/00949655.2012.738211</a></p>
+<p>Clopper &amp; Pearson (1934) Biometrika. 1934; 26,404-413
+<a href="https://doi.org/10.2307/2331986" class="external-link">doi:10.2307/2331986</a></p>
 <p>Martín Andrés &amp; Álvarez Hernández (2014) Stat Comput. 2014; 24,65–75
 <a href="https://doi.org/10.1007/s11222-012-9353-5" class="external-link">doi:10.1007/s11222-012-9353-5</a></p>
 <p>Roldán-Nofuentes &amp; Sidaty-Regad (2019) JSCS. 2019; 89:14,2621-2644
@@ -178,6 +189,20 @@ Anal. 2012; 6,1161–1173.
 <span class="r-in"><span>  test.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pulm.exac"</span>, <span class="st">"pseudomonas"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $cont</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`Gold standard vs. Test 1`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Test 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Gold standard Positive Negative   Sum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Positive     3630     1424  5054</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Negative     1342     5564  6906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Sum          4972     6988 11960</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`Gold standard vs. Test 2`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Test 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Gold standard Positive Negative   Sum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Positive      185     4869  5054</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Negative      123     6783  6906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Sum           308    11652 11960</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`True Status: POS`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Test 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Test 1     Positive Negative  Sum</span>
@@ -267,7 +292,7 @@ Anal. 2012; 6,1161–1173.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9.578013e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $pv$ppv.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7.66241e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.746808e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $pv$npv.test.stat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2261.186</span>
@@ -308,7 +333,7 @@ Anal. 2012; 6,1161–1173.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.552014e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $lr$plr.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.241611e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9.312086e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $lr$nlr.test.stat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.83283</span>

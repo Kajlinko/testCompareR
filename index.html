@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">testCompareR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Kajlinko/testCompareR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,21 +58,26 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>Test metrics like sensitivity, specificity, the predictive values and the likelihood ratios are common ways to measure the performance of a diagnostic test. The goal of testCompareR is to make comparing the test metrics from two diagnostic tests with dichotomous outcomes easy. Really easy.</p>
-<p>We want clinical researchers to be able to quickly access the statistical methods with the best performance, without having to trawl through the literature or learn a new complicated package. <code>testCompareR</code> does all of that so you don’t have to.</p>
+<p>We want clinical researchers to be able to quickly access the statistical methods with the best performance, without having to trawl through the literature or learn how to operate a complicated R package. <code>testCompareR</code> does all of the hard work so you don’t have to.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of testCompareR from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p><code>testCompareR</code> can be installed directly from CRAN using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"testCompareR"</span><span class="op">)</span></span></code></pre></div>
+<p>You can install the development version of testCompareR from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Kajlinko/testCompareR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<p><code>testCompareR</code> has two principal functions: <code><a href="reference/compareR.html">compareR()</a></code> and <code>interpretR</code>.</p>
+<p><code>testCompareR</code> has two principal functions: <code><a href="reference/compareR.html">compareR()</a></code> and <code><a href="reference/interpretR.html">interpretR()</a></code>.</p>
 <p>This example with simulated data demonstrates how they work. The data is provided as a data frame or matrix with three columns in the order test1, test2 and gold. It is sensible to code positive and negative results systematically, but real research can sometimes be messy. The <code><a href="reference/compareR.html">compareR()</a></code> function will try to take care of that for you.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kajlinko.github.io/testCompareR/">testCompareR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># simulate some data</span></span>
@@ -85,13 +91,13 @@
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># interpret the results (optional)</span></span>
-<span><span class="va">interpretR</span> <span class="op">&lt;-</span> <span class="va">results</span></span></code></pre></div>
-<p>With two function calls you can calculate the test metrics, including the confidence intervals with the best coverage, a compare the test metrics using the hypothesis tests with the best asymptotic performance. <code><a href="reference/interpretR.html">interpretR()</a></code> even provides a plain English summary of what your results mean in the console.</p>
+<span><span class="fu"><a href="reference/interpretR.html">interpretR</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div>
+<p>With two function calls you can calculate the test metrics, including the confidence intervals with the best coverage, and compare the test metrics using the hypothesis tests with the best asymptotic performance. <code><a href="reference/interpretR.html">interpretR()</a></code> even provides a plain English summary of what your results mean in the console.</p>
 <div class="section level3">
 <h3 id="additional-functions">Additional functions<a class="anchor" aria-label="anchor" href="#additional-functions"></a>
 </h3>
 <p>If you only have one test and the gold standard you can summarise the descriptive statistics quickly with <code><a href="reference/summariseR.html">summariseR()</a></code>. Here the data should be presented as a data frame or matrix with two columns.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kajlinko.github.io/testCompareR/">testCompareR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># simulate some data</span></span>
@@ -104,16 +110,17 @@
 <span><span class="fu"><a href="reference/summariseR.html">summariseR</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <p>One final function has been defined to help clinical researchers who want to perform pooled meta-analysis of data that is already available. <code><a href="reference/dataframeR.html">dataframeR()</a></code> constructs a data frame that can be provided to <code><a href="reference/compareR.html">compareR()</a></code> from figures commonly quoted in the literature. <code><a href="reference/dataframeR.html">dataframeR()</a></code> has eight parameters: <code>s11</code>, <code>s10</code>, <code>s01</code>, <code>s00</code>, <code>r11</code>, <code>r10</code>, <code>r01</code>, <code>r00</code>.</p>
 <p>Understanding the parameter names: s &amp; r represent positive and negative results for the gold standard test, respectively. The first digit represents a positive (1) or negative (0) result for Test 1. The second digit represents a positive (1) or negative (0) result for Test 2.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/dataframeR.html">dataframeR</a></span><span class="op">(</span><span class="fl">70</span>, <span class="fl">5</span>, <span class="fl">11</span>, <span class="fl">40</span>, <span class="fl">11</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">120</span><span class="op">)</span></span></code></pre></div>
 <p>This data frame can be combined with other data frames to produce a master data frame ready for analysis.</p>
-<p>If you have any ideas about additional functionalities that you think should be added, please get in touch or, better still, make a pull request and see what you can do with the code.</p>
+<p>If you have any ideas about additional functionality that you think should be added, please get in touch or, better still, make a pull request and see what you can do with the code.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="contributors">Contributors<a class="anchor" aria-label="anchor" href="#contributors"></a>
 </h2>
-<p>This project was helped greatly by Marc Henrion <a href="https://github.com/gitMarcH/" class="external-link">GitHub</a>.</p>
+<p>The idea for this package was conceived and developed by Kyle Wilson.</p>
+<p>The project was helped greatly by Marc Henrion <a href="https://github.com/gitMarcH/" class="external-link">GitHub</a>.</p>
 <p>Additionally, the statistical methods underlying this package and the source code upon which it is based are provided by José Antonio Roldán Nofuentes. If you use the package, please consider referencing his paper when describing your statistical methods. The paper is available <a href="https://doi.org/10.1186/s12874-020-00988-y" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
@@ -137,6 +144,8 @@
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=testCompareR" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/Kajlinko/testCompareR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/Kajlinko/testCompareR/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
