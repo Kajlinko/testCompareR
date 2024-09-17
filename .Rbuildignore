@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^simulations
 ^development
+^benchmarking
 ^LICENSE.md
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$

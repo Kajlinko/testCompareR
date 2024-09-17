@@ -1,0 +1,41 @@
+
+
+          COMPARISON OF THE PREDICTIVE VALUES 
+
+Estimated positive PV of Test 1 is  88.07018 % and its standard error is 1.357669 
+
+95 % confidence interval for the positive PV of Test 1 is ( 85.16952 % ;  90.49807 %) 
+
+Estimated positive PV of Test 2 is  89.35484 % and its standard error is 1.238624 
+
+95 % confidence interval for the positive PV of Test 2 is ( 86.69779 % ;  91.56234 %) 
+
+Estimated negative PV of Test 1 is  64.78405 % and its standard error is 2.753091 
+
+95 % confidence interval for the negative PV of Test 1 is ( 59.24617 % ;  69.97634 %) 
+
+Estimated negative PV of Test 2 is  78.48606 % and its standard error is 2.593698 
+
+95 % confidence interval for the negative PV of Test 2 is ( 73.02445 % ;  83.15112 %) 
+
+
+Wald test statistic for the global hypothesis test H0: (PPV1 = PPV2 and NPV1 = NPV2) is  25.94449  
+
+  Global p-value is  2e-06  
+
+  Applying the global hypothesis test (to an alpha error of 5 %), we reject the hypothesis H0: (PPV1 = PPV2 and NPV1 = NPV2) 
+
+  Estimated power (to an alpha error of 5 %) is 99.26 %  
+
+  Investigation of the causes of significance: 
+
+   Weighted generalized score statistic for H0: PPV1 = PPV2 is  0.807058  and the two-sided p-value is  0.368992  
+
+   Weighted generalized score statistic for H0: NPV1 = NPV2 is  22.50225  and the two-sided p-value is  2e-06  
+
+   Applying the Holm method (to an alpha error of 5 %), we do not reject the hypothesis H0: PPV1 = PPV2 and we reject the hypothesis H0: NPV1 = NPV2 
+
+   Negative PV of Test 2 is significantly greater than negative PV of Test 1 
+
+    95 % confidence interval for the difference NPV2 - NPV1 is ( 8.040664 % ;  19.36334 %) 
+

@@ -1,0 +1,41 @@
+
+
+          COMPARISON OF THE LIKELIHOOD RATIOS 
+
+Estimated positive LR of Test 1 is  3.193353  and its standard error is 0.33872 
+
+95 % confidence interval for the positive LR of Test 1 is ( 2.610218  ;  3.952402 ) 
+
+Estimated positive LR of Test 2 is  3.630931  and its standard error is 0.389536 
+
+95 % confidence interval for the positive LR of Test 1 is ( 2.96151  ;  4.505412 ) 
+
+Estimated negative LR of Test 1 is  0.235138  and its standard error is 0.022449 
+
+95 % confidence interval for the negative LR of Test 1 is ( 0.194711  ;  0.283254 ) 
+
+Estimated negative LR of Test 2 is  0.118571  and its standard error is 0.015973 
+
+95 % confidence interval for the negative LR of Test 2 is ( 0.090098  ;  0.153236 ) 
+
+
+Test statistic for the global hypothesis test H0: (PLR1 = PLR2 and NLR1 = NLR2) is  23.43805  
+
+  Global p-value is  8e-06  
+
+  Applying the global hypothesis test (to an alpha error of 5 %), we reject the hypothesis H0: (PLR1 = PLR2 and NLR1 = NLR2) 
+
+  Estimated power (to an alpha error of 5 %) is 99.78 %  
+
+  Investigation of the causes of significance: 
+
+   Test statistic for H0: PLR1 = PLR2 is  0.898025  and the two-sided p-value is  0.369172  
+
+   Test statistic for H0: NLR1 = NLR2 is  4.662817  and the two-sided p-value is  3e-06  
+
+   Applying the Holm method (to an alpha error of 5 %), we do not reject the hypothesis H0: PLR1 = PLR2 and we reject the hypothesis H0: NLR1 = NLR2 
+
+   Negative likelihood ratio of Test 1 is significantly greater than negative likelihood ratio of Test 2 
+
+    95 % confidence interval for the ratio NLR1 / NLR2 is ( 1.412383  ;  2.553809 ) 
+

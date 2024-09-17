@@ -1,0 +1,47 @@
+
+          PREVALENCE OF THE DISEASE 
+
+Estimated prevalence of the disease is  69.80482 % and its standard error is 1.555616 
+
+95 % confidence interval for the prevalence of the disease is ( 66.68067 % ;  72.76765 %) 
+
+
+          COMPARISON OF THE ACCURACIES (SENSITIVITIES AND SPECIFICITIES) 
+
+Estimated sensitivity of Test 1 is  82.56579 % and its standard error is 1.538684 
+
+95 % confidence interval for the sensitivity of Test 1 is ( 79.36292 % ;  85.38937 %) 
+
+Estimated sensitivity of Test 2 is  91.11842 % and its standard error is 1.153709 
+
+95 % confidence interval for the sensitivity of Test 1 is ( 88.61012 % ;  93.14782 %) 
+
+Estimated specificity of Test 1 is  74.14449 % and its standard error is 2.699841 
+
+95 % confidence interval for the specificity of Test 1 is ( 68.55724 % ;  79.08695 %) 
+
+Estimated specificity of Test 2 is  74.90494 % and its standard error is 2.673446 
+
+95 % confidence interval for the specificity of Test 1 is ( 69.35805 % ;  79.78674 %) 
+
+
+Wald test statistic for the global hypothesis test H0: (Se1 = Se2 and Sp1 = Sp2) is  25.662  
+
+  Global p-value is  3e-06  
+
+  Applying the global Wald test (to an alpha error of 5 %), we reject the hypothesis H0: (Se1 = Se2 and Sp1 = Sp2) 
+
+  Estimated power (to an alpha error of 5 %) is 99.8 %  
+
+  Investigation of the causes of significance: 
+
+   McNemar test statistic (with cc) for H0: Se1 = Se2 is  23.64545  and the two-sided p-value is  0  
+
+   McNemar test statistic (with cc) for H0: Sp1 = Sp2 is  0.011111  and the two-sided p-value is  0.991135  
+
+   Applying the Holm method (to an alpha error of 5 %), we reject the hypothesis H0: Se1 = Se2 and we do not reject the hypothesis H0: Sp1 = Sp2 
+
+   Sensitivity of Test 2 is significantly greater than sensitivity of Test 1 
+
+    95 % confidence interval for the difference Se2 - Se1 is ( 5.192182 % ;  11.857 %) 
+
