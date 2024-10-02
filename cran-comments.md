@@ -180,7 +180,18 @@ See https://github.com/Kajlinko/testCompareR/actions for output.
 # Update 3. v1.0.4
 
 ── R CMD check results ─────────────────────────────────────────────────────────
-── testCompareR 1.0.3  ─────────────────────────────────────────────────────────
+── testCompareR 1.0.4  ─────────────────────────────────────────────────────────
+Duration: 51.2s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+Checks run using rhub v2. 
+See https://github.com/Kajlinko/testCompareR/actions for output.
+
+# Update 4. v1.1.0
+
+── R CMD check results ─────────────────────────────────────────────────────────
+── testCompareR 1.1.0  ─────────────────────────────────────────────────────────
 Duration: 51.2s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
