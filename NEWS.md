@@ -1,6 +1,9 @@
-# testCompareR 1.0.5
+# testCompareR 1.1.0
 
-
+* Added generic functions - summary(), print() and plot()
+* Fixed broken tests
+* Updated arguments to remove ambiguity
+* Added validatR function for checking new arguments
 
 ---
 
