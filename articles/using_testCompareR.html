@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">testCompareR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
       <h1>Comparing binary diagnostic tests from paired data using testCompareR</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/Kajlinko/testCompareR/blob/v1.0.4/vignettes/using_testCompareR.Rmd" class="external-link"><code>vignettes/using_testCompareR.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Kajlinko/testCompareR/blob/main/vignettes/using_testCompareR.Rmd" class="external-link"><code>vignettes/using_testCompareR.Rmd</code></a></small>
       <div class="d-none name"><code>using_testCompareR.Rmd</code></div>
     </div>
 
@@ -109,182 +109,24 @@ only argument and the function outputs a list object containing the
 results of descriptive and inferential statistical tests.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span><span class="va">results</span></span>
-<span><span class="co">#&gt; $cont</span></span>
-<span><span class="co">#&gt; $cont$`Gold standard vs. Test 1`</span></span>
-<span><span class="co">#&gt;              Test 1</span></span>
-<span><span class="co">#&gt; Gold standard Positive Negative</span></span>
-<span><span class="co">#&gt;      Positive      502      106</span></span>
-<span><span class="co">#&gt;      Negative       68      195</span></span>
+<span><span class="co">#&gt;      test      metric estimate lower_ci upper_ci   p</span></span>
+<span><span class="co">#&gt; 1  Test 1 Sensitivity     82.6     79.4     85.4    </span></span>
+<span><span class="co">#&gt; 2  Test 2 Sensitivity     91.1     88.6     93.1 ***</span></span>
+<span><span class="co">#&gt; 3  Test 1 Specificity     74.1     68.6     79.1    </span></span>
+<span><span class="co">#&gt; 4  Test 2 Specificity     74.9     69.4     79.8    </span></span>
+<span><span class="co">#&gt; 5  Test 1         PPV     88.1     85.2     90.5    </span></span>
+<span><span class="co">#&gt; 6  Test 2         PPV     89.4     86.7     91.6    </span></span>
+<span><span class="co">#&gt; 7  Test 1         NPV     64.8     59.2     70.0    </span></span>
+<span><span class="co">#&gt; 8  Test 2         NPV     78.5     73.0     83.2 ***</span></span>
+<span><span class="co">#&gt; 9  Test 1         PLR      3.2      2.6      4.0    </span></span>
+<span><span class="co">#&gt; 10 Test 2         PLR      3.6      3.0      4.5    </span></span>
+<span><span class="co">#&gt; 11 Test 1         NLR      0.2      0.2      0.3 ***</span></span>
+<span><span class="co">#&gt; 12 Test 2         NLR      0.1      0.1      0.2    </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`Gold standard vs. Test 2`</span></span>
-<span><span class="co">#&gt;              Test 2</span></span>
-<span><span class="co">#&gt; Gold standard Positive Negative</span></span>
-<span><span class="co">#&gt;      Positive      554       54</span></span>
-<span><span class="co">#&gt;      Negative       66      197</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`True Status: POS`</span></span>
-<span><span class="co">#&gt;           Test 2</span></span>
-<span><span class="co">#&gt; Test 1     Positive Negative</span></span>
-<span><span class="co">#&gt;   Positive      473       29</span></span>
-<span><span class="co">#&gt;   Negative       81       25</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`True Status: NEG`</span></span>
-<span><span class="co">#&gt;           Test 2</span></span>
-<span><span class="co">#&gt; Test 1     Positive Negative</span></span>
-<span><span class="co">#&gt;   Positive       22       46</span></span>
-<span><span class="co">#&gt;   Negative       44      151</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $prev</span></span>
-<span><span class="co">#&gt;            Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; Prevalence     69.8 1.6     66.7     72.8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc</span></span>
-<span><span class="co">#&gt; $acc$accuracies</span></span>
-<span><span class="co">#&gt; $acc$accuracies$`Test 1`</span></span>
-<span><span class="co">#&gt;             Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; Sensitivity     82.6 1.5     79.4     85.4</span></span>
-<span><span class="co">#&gt; Specificity     74.1 2.7     68.6     79.1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$accuracies$`Test 2`</span></span>
-<span><span class="co">#&gt;             Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; Sensitivity     91.1 1.2     88.6     93.1</span></span>
-<span><span class="co">#&gt; Specificity     74.9 2.7     69.4     79.8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$glob.test.stat</span></span>
-<span><span class="co">#&gt; [1] 25.662</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$glob.p.value</span></span>
-<span><span class="co">#&gt; [1] 2.676497e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$glob.p.adj</span></span>
-<span><span class="co">#&gt; [1] 6.971825e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$sens.test.stat</span></span>
-<span><span class="co">#&gt; [1] 23.64545</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$sens.p.value</span></span>
-<span><span class="co">#&gt; [1] 1.158192e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$sens.p.adj</span></span>
-<span><span class="co">#&gt; [1] 6.949149e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$spec.test.stat</span></span>
-<span><span class="co">#&gt; [1] 0.01111111</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$spec.p.value</span></span>
-<span><span class="co">#&gt; [1] 0.9160511</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $acc$spec.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv</span></span>
-<span><span class="co">#&gt; $pv$predictive.values</span></span>
-<span><span class="co">#&gt; $pv$predictive.values$`Test 1`</span></span>
-<span><span class="co">#&gt;     Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PPV     88.1 1.4     85.2     90.5</span></span>
-<span><span class="co">#&gt; NPV     64.8 2.8     59.2     70.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$predictive.values$`Test 2`</span></span>
-<span><span class="co">#&gt;     Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PPV     89.4 1.2     86.7     91.6</span></span>
-<span><span class="co">#&gt; NPV     78.5 2.6     73.0     83.2</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.test.stat</span></span>
-<span><span class="co">#&gt; [1] 25.94449</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.p.value</span></span>
-<span><span class="co">#&gt; [1] 2.323942e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.p.adj</span></span>
-<span><span class="co">#&gt; [1] 6.971825e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.test.stat</span></span>
-<span><span class="co">#&gt; [1] 0.8070579</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.p.value</span></span>
-<span><span class="co">#&gt; [1] 0.3689915</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.test.stat</span></span>
-<span><span class="co">#&gt; [1] 22.50225</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.p.value</span></span>
-<span><span class="co">#&gt; [1] 2.098972e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1.049486e-05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr</span></span>
-<span><span class="co">#&gt; $lr$likelihood.ratios</span></span>
-<span><span class="co">#&gt; $lr$likelihood.ratios$`Test 1`</span></span>
-<span><span class="co">#&gt;     Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PLR      3.2 0.3      2.6      4.0</span></span>
-<span><span class="co">#&gt; NLR      0.2 0.0      0.2      0.3</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$likelihood.ratios$`Test 2`</span></span>
-<span><span class="co">#&gt;     Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PLR      3.6 0.4      3.0      4.5</span></span>
-<span><span class="co">#&gt; NLR      0.1 0.0      0.1      0.2</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$glob.test.stat</span></span>
-<span><span class="co">#&gt; [1] 23.43805</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$glob.p.value</span></span>
-<span><span class="co">#&gt; [1] 8.137524e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$glob.p.adj</span></span>
-<span><span class="co">#&gt; [1] 8.137524e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$plr.test.stat</span></span>
-<span><span class="co">#&gt; [1] 0.8980246</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$plr.p.value</span></span>
-<span><span class="co">#&gt; [1] 0.3691725</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$plr.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$nlr.test.stat</span></span>
-<span><span class="co">#&gt; [1] 4.662817</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$nlr.p.value</span></span>
-<span><span class="co">#&gt; [1] 3.119094e-06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lr$nlr.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1.247637e-05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other</span></span>
-<span><span class="co">#&gt; $other$alpha</span></span>
-<span><span class="co">#&gt; [1] 0.05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$equal</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$zeros</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$Youden1</span></span>
-<span><span class="co">#&gt; [1] 0.5671028</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$Youden2</span></span>
-<span><span class="co">#&gt; [1] 0.6602336</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$test.names</span></span>
-<span><span class="co">#&gt; [1] "Test 1" "Test 2"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "compareR"</span></span></code></pre></div>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 ' ' 1</span></span></code></pre></div>
 <p>Individual results can be accessed via standard indexing.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span><span class="op">$</span><span class="va">acc</span><span class="op">$</span><span class="va">accuracies</span> <span class="co"># returns summary tables for diagnostic accuracies</span></span>
@@ -486,6 +328,8 @@ whatever you’d like, though.</p>
 <span></span>
 <span><span class="co"># test with alpha = 0.5</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span></span>
 <span><span class="co"># all results are significant</span></span>
 <span><span class="fu"><a href="../reference/interpretR.html">interpretR</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
@@ -620,6 +464,8 @@ people, then set <code>margins = TRUE</code>.</p>
 <span></span>
 <span><span class="co"># test with alpha = 0.5</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, margins <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span></span>
 <span><span class="co"># contingency tables have margins</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">cont</span></span>
@@ -675,7 +521,11 @@ handled by the base R function <code><a href="https://rdrr.io/r/stats/p.adjust.h
 <span></span>
 <span><span class="co"># test with different multiple comparison methods</span></span>
 <span><span class="va">result1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, multi_corr <span class="op">=</span> <span class="st">"holm"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, multi_corr <span class="op">=</span> <span class="st">"bonf"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span></span>
 <span><span class="co"># the more restrictive Bonferroni method returns higher adjusted p values</span></span>
 <span><span class="va">result1</span><span class="op">$</span><span class="va">pv</span><span class="op">$</span><span class="va">glob.p.adj</span> <span class="op">&lt;</span> <span class="va">result2</span><span class="op">$</span><span class="va">pv</span><span class="op">$</span><span class="va">glob.p.adj</span></span>
@@ -700,6 +550,8 @@ stick to the default parameters.</p>
 <span></span>
 <span><span class="co"># run compareR without continuity correction</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, cc <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">acc</span></span>
 <span><span class="co">#&gt; $accuracies</span></span>
 <span><span class="co">#&gt; $accuracies$`Test 1`</span></span>
@@ -758,6 +610,8 @@ for p values or test statistics.</p>
 <span></span>
 <span><span class="co"># test with different multiple comparison methods</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, dp <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span></span>
 <span><span class="co"># the values in the summary tables are displayed to 3 decimal places</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">acc</span><span class="op">$</span><span class="va">accuracies</span></span>
@@ -793,101 +647,16 @@ predictive values; <code>plrnlr</code> for likelihood ratios.</p>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">test1</span>, <span class="va">test2</span>, <span class="va">gold</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># only display results for predictive values</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, sesp <span class="op">=</span> <span class="cn">FALSE</span>, plrnlr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, test1 <span class="op">=</span> <span class="st">"test1"</span>, test2 <span class="op">=</span> <span class="st">"test2"</span>, gold <span class="op">=</span> <span class="st">"gold"</span>, </span>
+<span>                   sesp <span class="op">=</span> <span class="cn">FALSE</span>, plrnlr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">result</span></span>
-<span><span class="co">#&gt; $cont</span></span>
-<span><span class="co">#&gt; $cont$`Gold standard vs. Test 1`</span></span>
-<span><span class="co">#&gt;              Test 1</span></span>
-<span><span class="co">#&gt; Gold standard Positive Negative</span></span>
-<span><span class="co">#&gt;      Positive      317       73</span></span>
-<span><span class="co">#&gt;      Negative       68      142</span></span>
+<span><span class="co">#&gt;     test metric estimate lower_ci upper_ci   p</span></span>
+<span><span class="co">#&gt; 1 Test 1    PPV     82.3     78.2     85.8    </span></span>
+<span><span class="co">#&gt; 2 Test 2    PPV     84.6     80.4     88.1   *</span></span>
+<span><span class="co">#&gt; 3 Test 1    NPV     66.0     59.5     72.1 ***</span></span>
+<span><span class="co">#&gt; 4 Test 2    NPV     59.3     53.4     65.0    </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`Gold standard vs. Test 2`</span></span>
-<span><span class="co">#&gt;              Test 2</span></span>
-<span><span class="co">#&gt; Gold standard Positive Negative</span></span>
-<span><span class="co">#&gt;      Positive      281      109</span></span>
-<span><span class="co">#&gt;      Negative       51      159</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`True Status: POS`</span></span>
-<span><span class="co">#&gt;           Test 2</span></span>
-<span><span class="co">#&gt; Test 1     Positive Negative</span></span>
-<span><span class="co">#&gt;   Positive      281       36</span></span>
-<span><span class="co">#&gt;   Negative        0       73</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $cont$`True Status: NEG`</span></span>
-<span><span class="co">#&gt;           Test 2</span></span>
-<span><span class="co">#&gt; Test 1     Positive Negative</span></span>
-<span><span class="co">#&gt;   Positive       51       17</span></span>
-<span><span class="co">#&gt;   Negative        0      142</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $prev</span></span>
-<span><span class="co">#&gt;            Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; Prevalence       65 1.9     61.1     68.7</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv</span></span>
-<span><span class="co">#&gt; $pv$predictive.values</span></span>
-<span><span class="co">#&gt; $pv$predictive.values$`Test 1`</span></span>
-<span><span class="co">#&gt;     Estimate  SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PPV     82.3 1.9     78.2     85.8</span></span>
-<span><span class="co">#&gt; NPV     66.0 3.2     59.5     72.1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$predictive.values$`Test 2`</span></span>
-<span><span class="co">#&gt;     Estimate SE Lower CI Upper CI</span></span>
-<span><span class="co">#&gt; PPV     84.6  2     80.4     88.1</span></span>
-<span><span class="co">#&gt; NPV     59.3  3     53.4     65.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.test.stat</span></span>
-<span><span class="co">#&gt; [1] 50.21468</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.p.value</span></span>
-<span><span class="co">#&gt; [1] 1.247447e-11</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$glob.p.adj</span></span>
-<span><span class="co">#&gt; [1] 1.247447e-11</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.test.stat</span></span>
-<span><span class="co">#&gt; [1] 5.279658</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.p.value</span></span>
-<span><span class="co">#&gt; [1] 0.02157598</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$ppv.p.adj</span></span>
-<span><span class="co">#&gt; [1] 0.02157598</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.test.stat</span></span>
-<span><span class="co">#&gt; [1] 15.86226</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.p.value</span></span>
-<span><span class="co">#&gt; [1] 6.812387e-05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $pv$npv.p.adj</span></span>
-<span><span class="co">#&gt; [1] 0.0001362477</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other</span></span>
-<span><span class="co">#&gt; $other$alpha</span></span>
-<span><span class="co">#&gt; [1] 0.05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$equal</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$zeros</span></span>
-<span><span class="co">#&gt; [1] 2</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$Youden1</span></span>
-<span><span class="co">#&gt; [1] 0.489011</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$Youden2</span></span>
-<span><span class="co">#&gt; [1] 0.4776557</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $other$test.names</span></span>
-<span><span class="co">#&gt; [1] "Test 1" "Test 2"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "compareR"</span></span></code></pre></div>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 ' ' 1</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="test-names">Test names<a class="anchor" aria-label="anchor" href="#test-names"></a>
@@ -905,6 +674,8 @@ parameter. This parameter accepts a character vector of length 2.</p>
 <span></span>
 <span><span class="co"># only display results for predictive values</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareR.html">compareR</a></span><span class="op">(</span><span class="va">df</span>, test.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"POCT"</span>, <span class="st">"Lab Blood"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in validatR(df = df, test1 = test1, test2 = test2, gold = gold): Using default columns. Check test 1 is first column, test 2 is second</span></span>
+<span><span class="co">#&gt;          column and gold standard is third column.</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">acc</span><span class="op">$</span><span class="va">accuracies</span></span>
 <span><span class="co">#&gt; $POCT</span></span>
 <span><span class="co">#&gt;             Estimate  SE Lower CI Upper CI</span></span>
@@ -938,7 +709,7 @@ yourself!</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

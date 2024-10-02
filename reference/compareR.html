@@ -11,7 +11,7 @@ multiple comparisons using methods in `p.adjust()`."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">testCompareR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@ multiple comparisons using methods in `p.adjust()`."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>compareR</h1>
-      <small class="dont-index">Source: <a href="https://github.com/Kajlinko/testCompareR/blob/v1.0.4/R/compareR.R" class="external-link"><code>R/compareR.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Kajlinko/testCompareR/blob/main/R/compareR.R" class="external-link"><code>R/compareR.R</code></a></small>
       <div class="d-none name"><code>compareR.Rd</code></div>
     </div>
 
@@ -50,7 +50,10 @@ multiple comparisons using methods in `p.adjust()`.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compareR</span><span class="op">(</span></span>
-<span>  <span class="va">df</span>,</span>
+<span>  df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  test1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  test2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  margins <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  multi_corr <span class="op">=</span> <span class="st">"holm"</span>,</span>
@@ -72,6 +75,21 @@ multiple comparisons using methods in `p.adjust()`.</p>
 <dl><dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
 <dd><p>A data frame or matrix with 3 columns (test1, test2, gold).
 Flexible coding of positive and negative results permitted.</p></dd>
+
+
+<dt id="arg-test-">test1<a class="anchor" aria-label="anchor" href="#arg-test-"></a></dt>
+<dd><p>Either a vector of values for Test 1 (if df is NULL) or a string
+or integer value to be used for subsetting df.</p></dd>
+
+
+<dt id="arg-test-">test2<a class="anchor" aria-label="anchor" href="#arg-test-"></a></dt>
+<dd><p>Either a vector of values for Test 2 (if df is NULL) or a string
+or integer value to be used for subsetting df.</p></dd>
+
+
+<dt id="arg-gold">gold<a class="anchor" aria-label="anchor" href="#arg-gold"></a></dt>
+<dd><p>Either a vector of values for the gold standard test (if df is
+NULL) or a string or integer value to be used for subsetting df.</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
@@ -188,185 +206,23 @@ Anal. 2012; 6,1161–1173.
 <span class="r-in"><span>  margins <span class="op">=</span> <span class="cn">TRUE</span>, multi_corr <span class="op">=</span> <span class="st">"bonf"</span>,</span></span>
 <span class="r-in"><span>  test.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pulm.exac"</span>, <span class="st">"pseudomonas"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cont</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`Gold standard vs. Test 1`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              Test 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Gold standard Positive Negative   Sum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Positive     3630     1424  5054</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Negative     1342     5564  6906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Sum          4972     6988 11960</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Using default columns. Check test 1 is first column, test 2 is second</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>          column and gold standard is third column.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           test      metric estimate lower_ci upper_ci   p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    pulm.exac Sensitivity     71.8     70.6     73.0 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  pseudomonas Sensitivity      3.7      3.2      4.2    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    pulm.exac Specificity     80.6     79.6     81.5    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  pseudomonas Specificity     98.2     97.9     98.5 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    pulm.exac         PPV     73.0     71.8     74.2 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  pseudomonas         PPV     60.1     54.5     65.4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    pulm.exac         NPV     79.6     78.7     80.6 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  pseudomonas         NPV     58.2     57.3     59.1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    pulm.exac         PLR      3.7      3.5      3.9 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 pseudomonas         PLR      2.1      1.6      2.6    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   pulm.exac         NLR      0.3      0.3      0.4    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 pseudomonas         NLR      1.0      1.0      1.0 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`Gold standard vs. Test 2`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              Test 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Gold standard Positive Negative   Sum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Positive      185     4869  5054</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Negative      123     6783  6906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Sum           308    11652 11960</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`True Status: POS`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           Test 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Test 1     Positive Negative  Sum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Positive      185     3445 3630</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Negative        0     1424 1424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sum           185     4869 5054</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cont$`True Status: NEG`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           Test 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Test 1     Positive Negative  Sum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Positive      123     1219 1342</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Negative        0     5564 5564</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sum           123     6783 6906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $prev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Prevalence     42.3 0.5     41.4     43.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$accuracies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$accuracies$pulm.exac</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sensitivity     71.8 0.6     70.6     73.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Specificity     80.6 0.5     79.6     81.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$accuracies$pseudomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sensitivity      3.7 0.3      3.2      4.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Specificity     98.2 0.2     97.9     98.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$glob.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12301.32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$glob.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$glob.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$sens.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10821.03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$sens.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$sens.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$spec.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1480.291</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$spec.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $acc$spec.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$predictive.values</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$predictive.values$pulm.exac</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PPV     73.0 0.6     71.8     74.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NPV     79.6 0.5     78.7     80.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$predictive.values$pseudomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PPV     60.1 2.8     54.5     65.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NPV     58.2 0.5     57.3     59.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$glob.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2830.026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$glob.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$glob.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$ppv.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 28.45746</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$ppv.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9.578013e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$ppv.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.746808e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$npv.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2261.186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$npv.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pv$npv.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$likelihood.ratios</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$likelihood.ratios$pulm.exac</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PLR      3.7 0.1      3.5      3.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NLR      0.3 0.0      0.3      0.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$likelihood.ratios$pseudomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  SE Lower CI Upper CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PLR      2.1 0.2      1.6      2.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NLR      1.0 0.0      1.0      1.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$glob.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2010.219</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$glob.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$glob.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$plr.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.246279</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$plr.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.552014e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$plr.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9.312086e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$nlr.test.stat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.83283</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$nlr.p.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lr$nlr.p.adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$alpha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$equal</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$zeros</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$Youden1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5239192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$Youden2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01879407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $other$test.names</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pulm.exac"   "pseudomonas"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "compareR"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 ' ' 1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -379,7 +235,7 @@ Anal. 2012; 6,1161–1173.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
