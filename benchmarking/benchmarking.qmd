@@ -1,7 +1,7 @@
 ---
 title: "Comparison of testCompareR, DTComPair and compbdt"
 author: "Kyle J. Wilson"
-format: docx
+format: html
 ---
 
 ## Introduction
@@ -12,10 +12,10 @@ This script was used during `testCompareR`'s development to benchmark testCompar
 
 While `testCompareR` can accept a data frame, matrix or tibble as its argument, both `DTComPair` and compbdt require the user to pre-process the data into the accepted format for their functions. To reproduce this script, it is necessary to load the `compbdt` function into memory. Here, that is achieved through `source()`.
 
-```{r echo=FALSE}
+```{r output=FALSE}
 # install necessary packages
 pkgs <- c("testCompareR", "DTComPair", "here", "microbenchmark", "dplyr", 
-          "ggplot2", "viridis")
+          "ggplot2", "viridis", "tidyr", "scales")
 
 for (pkg in pkgs) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
@@ -27,7 +27,11 @@ sapply(pkgs, library, character.only = TRUE)
 
 # source compbdt function
 source(here("benchmarking/compbdtFunction.R"))
+```
 
+Now that we have loaded each of the packages / functions, we can run some sample data through each of them. The `cass` data is provided within the `testCompareR` package and here is restructured according to the requirements of each program.
+
+```{r output=FALSE}
 # compute results for testCompareR
 results <- compareR(cass, dp=10)
 
@@ -60,7 +64,9 @@ compbdt(dat.compbdt$s11, dat.compbdt$s10,
 
 Next, we can create a large list containing all of the values which make up Table 4 in the testCompareR manuscript. This code is long and cumbersome, so is not produced in the Word document, but is available within the QMD file. At the end the list is output to `benchmarking/comparison.rda`.
 
-```{r echo=FALSE, eval=FALSE}
+```{r eval=FALSE}
+#| code-fold: true
+
 # calculate prevalence
 dtc <- tab.paired(d = cass[,3], y1 = cass[,1], cass[,2])
 
@@ -366,12 +372,13 @@ output <- list(`Prevalence` = round(prev, 2),
                `LR: Exercise Stress Test` = round(test1.lr, 2),
                `LR: History of Chest Pain` = round(test2.lr, 2))
 
-save(output, file = here("benchmarking/comparison.rda"))
+save(output, file = here("benchmarking/results_comparison.rda"))
 ```
 
 Next, we can run the efficiency tests. I have run `testCompareR` from within a function wrapper, in case that offers marginal gains over `DTComPair`.
 
-```{r eval=FALSE}
+```{r eval=FALSE, output=FALSE}
+
 # pre-processing of data for separate package
 dat.compareR <- cass
 dat.DTComPair <- data.frame(cass$angio, cass$exercise, cass$cp)
@@ -392,7 +399,6 @@ DTComPair <- function(dat) {
 }
 
 # calculate times for 1) compareR 2) compareR+interpretR 3) DTComPair 4) compbdt
-
 efficiency <- microbenchmark(
   compareR = test(dat.compareR),
   interpretR = interpretR(test(dat.compareR)),
@@ -404,10 +410,13 @@ efficiency <- microbenchmark(
   times = 100
 )
 
-save(efficiency, file = "efficiencies.rda")
+save(efficiency, file = here("benchmarking/comparative_efficiencies.rda"))
+```
 
+Now we want to investigate the reason `DTComPair` is slower than `testCompareR`.
+
+```{r eval=FALSE, outpyt=FALSE}
 # investigate efficiency of DTComPair
-
 d <- as.vector(cass$angio)
 y1 <- as.vector(cass$exercise)
 y2 <- as.vector(cass$cp)
@@ -423,7 +432,6 @@ descriptive <- function(vals) {
 }
 
 # individual functions vs. internal functions
-
 internal.efficiency <- microbenchmark(
   desc.tc = descriptive(vals),
   desc.dt = acc.paired(dtc),
@@ -439,18 +447,15 @@ internal.efficiency <- microbenchmark(
 internal.efficiency <- internal.efficiency %>% arrange(expr)
 internal.efficiency$type <- c(rep("desc", 200), rep("acc", 200), rep("pv", 200), rep("lr", 200))
 
-save(internal.efficiency, file = "internal.efficiencies2.rda")
-```
-
-```{r}
-# load instead of running all of the code again
-load(here("benchmarking/internal.efficiencies2.rda"))
-load(here("benchmarking/efficiencies.rda"))
+save(internal.efficiency, file = here("benchmarking/internal_efficiencies.rda"))
 ```
 
 Here I have run the tests on a different machine to when I prepared the manuscript, but as the results are very similar and the specifications have been clearly described in the paper there is no need to update the figures or tables. Nevertheless, for demonstration purposes I show how the plots were generated.
 
 ```{r}
+load(here("benchmarking/comparative_efficiencies.rda"))
+load(here("benchmarking/internal_efficiencies.rda"))
+
 efficiency$expr <- factor(efficiency$expr, 
                           levels = c("compbdt", "DTComPair", "interpretR",
                                      "compareR"))
@@ -480,3 +485,98 @@ ggplot(internal.efficiency, aes(x = time, y = expr, fill = type)) +
   labs(x = "Time (ms)", y = "", 
   title = "Computational run time for the packages' internal functions")
 ```
+
+## How efficiency changes with data size
+
+To test the efficiency with different sized data sets I duplicated the a simulated data set to create progressively larger data sets. I scaled linearly, in order to see if the computational time also scales linearly.
+
+It is not useful to run compbdt this many times, as it is already demonstrably slower and the pre-processing has to be handled by `testCompareR` anyway.
+
+First, we can make a simulated data set using the internal `dataframeR` function. I want to create a small increase in sensitivity which costs a lot in terms of specificity.
+
+```{r}
+dat <- testCompareR:::dataframeR(800,12,8,180,300,10,90,600)
+```
+
+Next, we set up the efficiency testing.
+
+```{r}
+dat.compareR <- dat
+dat.compareR.list <- list()
+
+for(n in c(10,20,30,40,50)) {   
+  df <- do.call("rbind", replicate(n, dat.compareR, simplify = FALSE))   
+  dat.compareR.list <- append(dat.compareR.list, list(df)) 
+}
+
+dat.DTComPair <- data.frame(dat$gold, dat$test1, dat$test2)
+dat.DTComPair.list <- list()
+
+for(n in c(10,20,30,40,50)) {   
+  df <- do.call("rbind", replicate(n, dat.compareR, simplify = FALSE))   
+  dat.DTComPair.list <- append(dat.DTComPair.list, list(df)) 
+}
+```
+
+Finally, we perform the efficiency testing. This is computationally intensive and will take some minutes to run. 
+
+```{r eval=FALSE, output=FALSE}
+efficiencies <- list()
+
+for(i in 1:length(dat.compareR.list)) {
+  
+  test <- function(dat) {
+    compareR(dat)
+  }
+  
+  efficiency <- microbenchmark(
+  compareR = test(dat.compareR.list[[i]]),
+  interpretR = interpretR(test(dat.compareR.list[[i]])),
+  DTComPair = DTComPair(dat.DTComPair.list[[i]]),
+  times = 25)
+  
+  efficiencies <- append(efficiencies, efficiency)
+  
+}
+
+names(efficiencies) <- paste(names(efficiencies), c(1,1,2,2,3,3,4,4,5,5),
+                             sep = "_")
+
+save(efficiencies, file = here("benchmarking/scaled_efficiencies.rda"))
+```
+
+Finally, we can plot the outcome. 
+
+```{r}
+load(here("benchmarking/scaled_efficiencies.rda"))
+
+df <- as.data.frame(efficiencies)
+
+df_long <- df %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = c(".value", "iteration"),
+    names_pattern = "(expr|time)_(\\d+)"
+  )
+
+df_long$iteration <- as.numeric(df_long$iteration) * nrow(dat) * 10
+
+df_long <- df_long %>% 
+  group_by(iteration, expr) %>%
+  mutate(
+    median_c = median(time) / 1e+6
+  )
+
+ggplot(df_long, aes(x = iteration, y = median_c, group = expr, colour = expr)) +
+  geom_line() +
+  facet_wrap(~expr, scales = "free_y", nrow = 3) +
+  scale_color_viridis(discrete = TRUE) +
+  scale_x_continuous(labels = label_number(scale = 1)) +
+  scale_y_continuous(labels = label_number(scale = 1)) +
+  labs(x = "No. Samples in Dataset", y = "Median Computation Time (ms)", color = "Function") +
+  theme_minimal()
+```
+
+## Conclusions
+
+Here we have shown that `testCompareR` achieves comparable results to `DTComPair` and `compbdt`, that it performs more quickly, even when wrapped in the `interpretR` function and that computation time scales linearly with data size, outperforming `DTComPair` on large datasets.

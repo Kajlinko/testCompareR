@@ -198,3 +198,14 @@ Duration: 51.2s
 
 Checks run using rhub v2. 
 See https://github.com/Kajlinko/testCompareR/actions for output.
+
+# Update 5. v1.1.1
+
+── R CMD check results ─────────────────────────────────────────────────────────
+── testCompareR 1.1.1  ─────────────────────────────────────────────────────────
+Duration: 10.8s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+Checks run using rhub v2. 
+See https://github.com/Kajlinko/testCompareR/actions for output.

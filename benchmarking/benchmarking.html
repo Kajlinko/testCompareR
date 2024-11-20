@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kyle J. Wilson">
+
+<title>Comparison of testCompareR, DTComPair and compbdt</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="benchmarking_files/libs/clipboard/clipboard.min.js"></script>
+<script src="benchmarking_files/libs/quarto-html/quarto.js"></script>
+<script src="benchmarking_files/libs/quarto-html/popper.min.js"></script>
+<script src="benchmarking_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="benchmarking_files/libs/quarto-html/anchor.min.js"></script>
+<link href="benchmarking_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="benchmarking_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="benchmarking_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="benchmarking_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="benchmarking_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Comparison of testCompareR, DTComPair and compbdt</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kyle J. Wilson </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This script was used during <code>testCompareR</code>’s development to benchmark testCompareR against the only available R package, <code>DTComPair</code>, which performs a similar function, and its open-source predecessor, <code>compbdt</code>. The full manuscript has further details on the development, mathematical bases and use cases for <code>testCompareR</code>.</p>
+</section>
+<section id="preparing-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="preparing-the-data">Preparing the data</h2>
+<p>While <code>testCompareR</code> can accept a data frame, matrix or tibble as its argument, both <code>DTComPair</code> and compbdt require the user to pre-process the data into the accepted format for their functions. To reproduce this script, it is necessary to load the <code>compbdt</code> function into memory. Here, that is achieved through <code>source()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install necessary packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"here"</span>, <span class="st">"microbenchmark"</span>, <span class="st">"dplyr"</span>, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"ggplot2"</span>, <span class="st">"viridis"</span>, <span class="st">"tidyr"</span>, <span class="st">"scales"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pkg <span class="cf">in</span> pkgs) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(pkg, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(pkg)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(pkgs, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># source compbdt function</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"benchmarking/compbdtFunction.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have loaded each of the packages / functions, we can run some sample data through each of them. The <code>cass</code> data is provided within the <code>testCompareR</code> package and here is restructured according to the requirements of each program.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compute results for testCompareR</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">compareR</span>(cass, <span class="at">dp=</span><span class="dv">10</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a function which mirrors the functionality of compareR() for DTComPair</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>DTComPair <span class="ot">&lt;-</span> <span class="cf">function</span>(dat) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  dtc <span class="ot">&lt;-</span> <span class="fu">tab.paired</span>(<span class="at">d =</span> dat[,<span class="dv">3</span>], <span class="at">y1 =</span> dat[,<span class="dv">1</span>], dat[,<span class="dv">2</span>])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sum =</span> <span class="fu">acc.paired</span>(dtc), <span class="co"># returns point estimates and CIs</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">acc =</span> <span class="fu">sesp.mcnemar</span>(dtc), <span class="co"># compares diagnostic accuracies with McNemars</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">pv =</span> <span class="fu">pv.wgs</span>(dtc), <span class="co"># compares PVs with weighted generalised score statistic</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">lr =</span> <span class="fu">dlr.regtest</span>(dtc)) <span class="co"># compares LRs with regression model</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># compute results for DTComPair</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>results.dt <span class="ot">&lt;-</span> <span class="fu">DTComPair</span>(cass)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-process data for compbdt using internal function from testCompareR</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>dat.compbdt <span class="ot">&lt;-</span> testCompareR<span class="sc">:::</span><span class="fu">values.2test</span>(cass)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># manually run compbdt and extract numbers (changed decip to 6 in function)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">compbdt</span>(dat.compbdt<span class="sc">$</span>s11, dat.compbdt<span class="sc">$</span>s10,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        dat.compbdt<span class="sc">$</span>s01, dat.compbdt<span class="sc">$</span>s00,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        dat.compbdt<span class="sc">$</span>r11, dat.compbdt<span class="sc">$</span>r10,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        dat.compbdt<span class="sc">$</span>r01, dat.compbdt<span class="sc">$</span>r00)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we can create a large list containing all of the values which make up Table 4 in the testCompareR manuscript. This code is long and cumbersome, so is not produced in the Word document, but is available within the QMD file. At the end the list is output to <code>benchmarking/comparison.rda</code>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate prevalence</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dtc <span class="ot">&lt;-</span> <span class="fu">tab.paired</span>(<span class="at">d =</span> cass[,<span class="dv">3</span>], <span class="at">y1 =</span> cass[,<span class="dv">1</span>], cass[,<span class="dv">2</span>])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>prev <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">20</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>prev[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>prev[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>prev[<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>prev[<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">69.805</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">1.556</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">66.681</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">72.768</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>prev[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>prev <span class="ot">&lt;-</span> <span class="fu">round</span>(prev, <span class="dv">3</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(prev) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">c</span>(<span class="st">"PLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"NLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>))</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>test1.acc <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>sens.p.value</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>spec.p.value</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>sensitivity[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>sensitivity[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>sensitivity[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>sensitivity[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>acc<span class="sc">$</span>sensitivity[<span class="dv">5</span>]</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>specificity[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>specificity[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>specificity[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>specificity[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>acc<span class="sc">$</span>specificity[<span class="dv">5</span>]</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">82.566</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">1.539</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">79.363</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">85.389</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">74.144</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">2.7</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">68.577</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">79.087</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>test1.acc[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="fl">0.991</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>test1.acc <span class="ot">&lt;-</span> <span class="fu">round</span>(test1.acc, <span class="dv">3</span>)</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test1.acc) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">c</span>(<span class="st">"Se"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"Sp"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>test2.acc <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>acc<span class="sc">$</span>accuracies[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>sensitivity[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>sensitivity[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>sensitivity[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>sensitivity[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>specificity[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>specificity[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>specificity[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>specificity[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">91.118</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">1.154</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">88.610</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">93.148</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">74.905</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">2.673</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">69.358</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">79.787</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>test2.acc[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>test2.acc <span class="ot">&lt;-</span> <span class="fu">round</span>(test2.acc, <span class="dv">3</span>)</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test2.acc) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">c</span>(<span class="st">"Se"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"Sp"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1</span></span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>test1.pv <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>ppv.p.value</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>npv.p.value</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ppv[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ppv[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ppv[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ppv[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>pv<span class="sc">$</span>ppv[<span class="dv">5</span>]</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>npv[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>npv[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>npv[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>npv[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>pv<span class="sc">$</span>npv[<span class="dv">5</span>]</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">88.07</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">1.358</span></span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">85.17</span></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">90.498</span></span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="fl">0.369</span></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">64.784</span></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">2.753</span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">59.246</span></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">69.976</span></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>test1.pv[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>test1.pv <span class="ot">&lt;-</span> <span class="fu">round</span>(test1.pv, <span class="dv">3</span>)</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test1.pv) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">c</span>(<span class="st">"PPV"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"NPV"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2</span></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>test2.pv <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>pv<span class="sc">$</span>predictive.values[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ppv[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ppv[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ppv[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ppv[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>npv[<span class="dv">1</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>npv[<span class="dv">2</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>npv[<span class="dv">3</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>npv[<span class="dv">4</span>]<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">89.355</span></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">1.239</span></span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">86.698</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">91.562</span></span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">78.468</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">2.594</span></span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">73.024</span></span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">83.151</span></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>test2.pv[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>test2.pv <span class="ot">&lt;-</span> <span class="fu">round</span>(test2.pv, <span class="dv">3</span>)</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test2.pv) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">c</span>(<span class="st">"PPV"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"NPV"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1</span></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>test1.lr <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>plr.p.value</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>nlr.p.value</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>pdlr[<span class="dv">1</span>]</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>pdlr[<span class="dv">2</span>]</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>pdlr[<span class="dv">3</span>]</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>pdlr[<span class="dv">4</span>]</span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>lr<span class="sc">$</span>pdlr<span class="sc">$</span>p.value</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ndlr[<span class="dv">1</span>]</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ndlr[<span class="dv">2</span>]</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ndlr[<span class="dv">3</span>]</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test1<span class="sc">$</span>ndlr[<span class="dv">4</span>]</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>lr<span class="sc">$</span>ndlr<span class="sc">$</span>p.value</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">3.193</span></span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">0.339</span></span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">2.61</span></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">3.952</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="fl">0.369</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">0.235</span></span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">0.023</span></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">0.195</span></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">0.283</span></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>test1.lr[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>test1.lr <span class="ot">&lt;-</span> <span class="fu">round</span>(test1.lr, <span class="dv">3</span>)</span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test1.lr) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">c</span>(<span class="st">"PLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"NLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2</span></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>test2.lr <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results<span class="sc">$</span>lr<span class="sc">$</span>likelihood.ratios[[<span class="dv">2</span>]][<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">1</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>pdlr[<span class="dv">1</span>]</span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>pdlr[<span class="dv">2</span>]</span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>pdlr[<span class="dv">3</span>]</span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>pdlr[<span class="dv">4</span>]</span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ndlr[<span class="dv">1</span>]</span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ndlr[<span class="dv">2</span>]</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ndlr[<span class="dv">3</span>]</span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> results.dt<span class="sc">$</span>sum<span class="sc">$</span>Test2<span class="sc">$</span>ndlr[<span class="dv">4</span>]</span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">2</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">3.631</span></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">0.390</span></span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">2.962</span></span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fl">4.505</span></span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fl">0.119</span></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fl">0.016</span></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fl">0.09</span></span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="fl">0.153</span></span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a>test2.lr[<span class="dv">3</span>,<span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a>test2.lr <span class="ot">&lt;-</span> <span class="fu">round</span>(test2.lr, <span class="dv">3</span>)</span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(test2.lr) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"testCompareR"</span>, <span class="st">"DTComPair"</span>, <span class="st">"compbdt"</span>),</span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">c</span>(<span class="st">"PLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>,<span class="st">"NLR"</span>,<span class="st">"SE"</span>,<span class="st">"LCI"</span>,<span class="st">"UCI"</span>,<span class="st">"p"</span>)</span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">Prevalence</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(prev, <span class="dv">2</span>),</span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Acc: Exercise Stress Test</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test1.acc, <span class="dv">2</span>),</span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Acc: History of Chest Pain</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test2.acc, <span class="dv">2</span>),</span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">PV: Exercise Stress Test</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test1.pv, <span class="dv">2</span>),</span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">PV: History of Chest Pain</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test2.pv, <span class="dv">2</span>),</span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">LR: Exercise Stress Test</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test1.lr, <span class="dv">2</span>),</span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">LR: History of Chest Pain</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(test2.lr, <span class="dv">2</span>))</span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(output, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"benchmarking/results_comparison.rda"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Next, we can run the efficiency tests. I have run <code>testCompareR</code> from within a function wrapper, in case that offers marginal gains over <code>DTComPair</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-processing of data for separate package</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dat.compareR <span class="ot">&lt;-</span> cass</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dat.DTComPair <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(cass<span class="sc">$</span>angio, cass<span class="sc">$</span>exercise, cass<span class="sc">$</span>cp)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>dat.compbdt <span class="ot">&lt;-</span> testCompareR<span class="sc">:::</span><span class="fu">values.2test</span>(cass)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># run compareR from within a function to make similar to DTComPair</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="cf">function</span>(dat) {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compareR</span>(dat)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># run all functions from DTComPair to create similar readout to compareR</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>DTComPair <span class="ot">&lt;-</span> <span class="cf">function</span>(dat) {</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  dtc <span class="ot">&lt;-</span> <span class="fu">tab.paired</span>(<span class="at">d =</span> dat[,<span class="dv">3</span>], <span class="at">y1 =</span> dat[,<span class="dv">1</span>], dat[,<span class="dv">2</span>], <span class="at">data =</span> dat)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">acc.paired</span>(dtc)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sesp.mcnemar</span>(dtc)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pv.wgs</span>(dtc)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dlr.regtest</span>(dtc)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate times for 1) compareR 2) compareR+interpretR 3) DTComPair 4) compbdt</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>efficiency <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">compareR =</span> <span class="fu">test</span>(dat.compareR),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">interpretR =</span> <span class="fu">interpretR</span>(<span class="fu">test</span>(dat.compareR)),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">DTComPair =</span> <span class="fu">DTComPair</span>(dat.DTComPair),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">compbdt =</span> <span class="fu">compbdt</span>(dat.compbdt<span class="sc">$</span>s11, dat.compbdt<span class="sc">$</span>s10,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                    dat.compbdt<span class="sc">$</span>s01, dat.compbdt<span class="sc">$</span>s00,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>                    dat.compbdt<span class="sc">$</span>r11, dat.compbdt<span class="sc">$</span>r10,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                    dat.compbdt<span class="sc">$</span>r01, dat.compbdt<span class="sc">$</span>r00),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">100</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(efficiency, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"benchmarking/comparative_efficiencies.rda"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we want to investigate the reason <code>DTComPair</code> is slower than <code>testCompareR</code>.</p>
+<div class="cell" data-outpyt="false">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># investigate efficiency of DTComPair</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(cass<span class="sc">$</span>angio)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(cass<span class="sc">$</span>exercise)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(cass<span class="sc">$</span>cp)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>dtc <span class="ot">&lt;-</span> <span class="fu">tab.paired</span>(<span class="at">d =</span> d, <span class="at">y1 =</span> y1, <span class="at">y2 =</span> y2)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> testCompareR<span class="sc">:::</span><span class="fu">values.2test</span>(cass)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>descriptive <span class="ot">&lt;-</span> <span class="cf">function</span>(vals) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  testCompareR<span class="sc">:::</span><span class="fu">conf.prev</span>(vals)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  testCompareR<span class="sc">:::</span><span class="fu">conf.acc</span>(vals)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  testCompareR<span class="sc">:::</span><span class="fu">conf.pv</span>(vals)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  testCompareR<span class="sc">:::</span><span class="fu">conf.lr</span>(vals)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># individual functions vs. internal functions</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>internal.efficiency <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">desc.tc =</span> <span class="fu">descriptive</span>(vals),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">desc.dt =</span> <span class="fu">acc.paired</span>(dtc),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">acc.tc =</span> testCompareR<span class="sc">:::</span><span class="fu">output.acc</span>(vals),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">acc.dt =</span> <span class="fu">sesp.mcnemar</span>(dtc),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">pv.tc =</span> testCompareR<span class="sc">:::</span><span class="fu">output.pv</span>(vals),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">pv.dt =</span> <span class="fu">pv.wgs</span>(dtc),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">lr.tc =</span> testCompareR<span class="sc">:::</span><span class="fu">output.lr</span>(vals),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">lr.dt =</span> <span class="fu">dlr.regtest</span>(dtc),</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">100</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>internal.efficiency <span class="ot">&lt;-</span> internal.efficiency <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(expr)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>internal.efficiency<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"desc"</span>, <span class="dv">200</span>), <span class="fu">rep</span>(<span class="st">"acc"</span>, <span class="dv">200</span>), <span class="fu">rep</span>(<span class="st">"pv"</span>, <span class="dv">200</span>), <span class="fu">rep</span>(<span class="st">"lr"</span>, <span class="dv">200</span>))</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(internal.efficiency, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"benchmarking/internal_efficiencies.rda"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here I have run the tests on a different machine to when I prepared the manuscript, but as the results are very similar and the specifications have been clearly described in the paper there is no need to update the figures or tables. Nevertheless, for demonstration purposes I show how the plots were generated.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"benchmarking/comparative_efficiencies.rda"</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"benchmarking/internal_efficiencies.rda"</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>efficiency<span class="sc">$</span>expr <span class="ot">&lt;-</span> <span class="fu">factor</span>(efficiency<span class="sc">$</span>expr, </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"compbdt"</span>, <span class="st">"DTComPair"</span>, <span class="st">"interpretR"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"compareR"</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>efficiency<span class="sc">$</span>time <span class="ot">&lt;-</span> efficiency<span class="sc">$</span>time <span class="sc">/</span> <span class="dv">1000000</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(efficiency, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> expr, <span class="at">fill =</span> expr)) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>(<span class="at">discrete =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans =</span> <span class="st">"log10"</span>, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="cf">function</span>(x) <span class="fu">format</span>(x, <span class="at">scientific =</span> <span class="cn">FALSE</span>)) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time (ms)"</span>, <span class="at">y =</span> <span class="st">""</span>, </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Computational run time for the packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="benchmarking_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>internal.efficiency<span class="sc">$</span>expr <span class="ot">&lt;-</span> <span class="fu">factor</span>(internal.efficiency<span class="sc">$</span>expr, </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"lr.dt"</span>, <span class="st">"lr.tc"</span>, <span class="st">"pv.dt"</span>, <span class="st">"pv.tc"</span>, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">"acc.dt"</span>, <span class="st">"acc.tc"</span>, <span class="st">"desc.dt"</span>, <span class="st">"desc.tc"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                            )</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>internal.efficiency<span class="sc">$</span>time <span class="ot">&lt;-</span> internal.efficiency<span class="sc">$</span>time <span class="sc">/</span> <span class="dv">1000000</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(internal.efficiency, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> expr, <span class="at">fill =</span> type)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>(<span class="at">discrete =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans =</span> <span class="st">"log10"</span>, </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="cf">function</span>(x) <span class="fu">format</span>(x, <span class="at">scientific =</span> <span class="cn">FALSE</span>)) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time (ms)"</span>, <span class="at">y =</span> <span class="st">""</span>, </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Computational run time for the packages' internal functions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="benchmarking_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="how-efficiency-changes-with-data-size" class="level2">
+<h2 class="anchored" data-anchor-id="how-efficiency-changes-with-data-size">How efficiency changes with data size</h2>
+<p>To test the efficiency with different sized data sets I duplicated the a simulated data set to create progressively larger data sets. I scaled linearly, in order to see if the computational time also scales linearly.</p>
+<p>It is not useful to run compbdt this many times, as it is already demonstrably slower and the pre-processing has to be handled by <code>testCompareR</code> anyway.</p>
+<p>First, we can make a simulated data set using the internal <code>dataframeR</code> function. I want to create a small increase in sensitivity which costs a lot in terms of specificity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> testCompareR<span class="sc">:::</span><span class="fu">dataframeR</span>(<span class="dv">800</span>,<span class="dv">12</span>,<span class="dv">8</span>,<span class="dv">180</span>,<span class="dv">300</span>,<span class="dv">10</span>,<span class="dv">90</span>,<span class="dv">600</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we set up the efficiency testing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dat.compareR <span class="ot">&lt;-</span> dat</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dat.compareR.list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(n <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">50</span>)) {   </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">"rbind"</span>, <span class="fu">replicate</span>(n, dat.compareR, <span class="at">simplify =</span> <span class="cn">FALSE</span>))   </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  dat.compareR.list <span class="ot">&lt;-</span> <span class="fu">append</span>(dat.compareR.list, <span class="fu">list</span>(df)) </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>dat.DTComPair <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(dat<span class="sc">$</span>gold, dat<span class="sc">$</span>test1, dat<span class="sc">$</span>test2)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>dat.DTComPair.list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(n <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">50</span>)) {   </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">"rbind"</span>, <span class="fu">replicate</span>(n, dat.compareR, <span class="at">simplify =</span> <span class="cn">FALSE</span>))   </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  dat.DTComPair.list <span class="ot">&lt;-</span> <span class="fu">append</span>(dat.DTComPair.list, <span class="fu">list</span>(df)) </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we perform the efficiency testing. This is computationally intensive and will take some minutes to run.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>efficiencies <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(dat.compareR.list)) {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> <span class="cf">function</span>(dat) {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">compareR</span>(dat)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  efficiency <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">compareR =</span> <span class="fu">test</span>(dat.compareR.list[[i]]),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">interpretR =</span> <span class="fu">interpretR</span>(<span class="fu">test</span>(dat.compareR.list[[i]])),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">DTComPair =</span> <span class="fu">DTComPair</span>(dat.DTComPair.list[[i]]),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">25</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  efficiencies <span class="ot">&lt;-</span> <span class="fu">append</span>(efficiencies, efficiency)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(efficiencies) <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">names</span>(efficiencies), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">5</span>),</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                             <span class="at">sep =</span> <span class="st">"_"</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(efficiencies, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"benchmarking/scaled_efficiencies.rda"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we can plot the outcome.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"benchmarking/scaled_efficiencies.rda"</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(efficiencies)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>df_long <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"iteration"</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(expr|time)_(</span><span class="sc">\\</span><span class="st">d+)"</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>df_long<span class="sc">$</span>iteration <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_long<span class="sc">$</span>iteration) <span class="sc">*</span> <span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">10</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>df_long <span class="ot">&lt;-</span> df_long <span class="sc">%&gt;%</span> </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iteration, expr) <span class="sc">%&gt;%</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_c =</span> <span class="fu">median</span>(time) <span class="sc">/</span> <span class="fl">1e+6</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_long, <span class="fu">aes</span>(<span class="at">x =</span> iteration, <span class="at">y =</span> median_c, <span class="at">group =</span> expr, <span class="at">colour =</span> expr)) <span class="sc">+</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>expr, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">nrow =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis</span>(<span class="at">discrete =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"No. Samples in Dataset"</span>, <span class="at">y =</span> <span class="st">"Median Computation Time (ms)"</span>, <span class="at">color =</span> <span class="st">"Function"</span>) <span class="sc">+</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="benchmarking_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>Here we have shown that <code>testCompareR</code> achieves comparable results to <code>DTComPair</code> and <code>compbdt</code>, that it performs more quickly, even when wrapped in the <code>interpretR</code> function and that computation time scales linearly with data size, outperforming <code>DTComPair</code> on large datasets.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
